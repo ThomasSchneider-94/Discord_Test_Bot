@@ -1,0 +1,48 @@
+{
+    "reactionToRole" : [
+        {
+            "messageId": "1142093517485777077",
+            "messageName": "Test Name 1",
+            "channelId": "1140293042528596049",
+            "emojiToRole": [
+                {
+                    "emoji": "❤️",
+                    "role": "Test"
+                },
+                {
+                    "emoji": "👍",
+                    "role": "Test 2"
+                }
+            ],
+            "generalRole" : "__________________________________________________"
+        },
+        {
+            "messageId": "1142093540336336896",
+            "messageName": "Test Name 2",
+            "channelId": "1140293042528596049",
+            "emojiToRole": [
+                {
+                    "emoji": "😅",
+                    "role": "Test 3"
+                },
+                {
+                    "emoji": "😭",
+                    "role": "Test 4"
+                }
+            ],
+            "generalRole" : "=================================================="
+        },
+        {
+            "messageId": "1142094142894252092",
+            "messageName": "Test Name 3",
+            "channelId": "1140293042528596049",
+            "emojiToRole": [
+                {
+                    "emoji": "✅",
+                    "role": "Au revoir"
+                }
+            ],
+            "generalRole" : ""
+        }
+    ]
+}
