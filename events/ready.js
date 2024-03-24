@@ -6,6 +6,7 @@ module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	async execute(client) {
+		// Récupère les messages à surveiller
 		for (messageToReact of reactionToRole) {
 			const channel = client.channels.cache.get(messageToReact.channelId);
 			try {
