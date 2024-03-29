@@ -17,6 +17,6 @@ module.exports = {
 			}
 		}
 		
-		console.log(`Bot ${client.user.tag} opérationnel`);
+		console.log(`Bot ${client.user.tag} opérationnel}`);
 	},
 };
