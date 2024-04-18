@@ -9,7 +9,7 @@ const { Events } = require('discord.js');
 //                  - emojiToRole : une liste de json qui informe de comment se comporter quand telle ou telle emoji est donné
 
 // Les éléments qui composent emojiToRole sont des jsons composés de 2 attributs (emoji, role), qui indiquent que si telle emoji est donnée, alors tel rôle doit être attribué
-const { reactionToRole } = require('./configReactionToRole.json');
+const { reactionToRole } = require('./config/configReactionToRole.json');
 
 
 module.exports = {
