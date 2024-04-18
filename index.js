@@ -1,19 +1,28 @@
-// ========== BIBLIOTHÈQUES ==========
+// ======================================== BIBLIOTHÈQUES ========================================
 const fs = require('fs');
 const path = require('path');
 
-// ========== PARAMETRAGES DU BOT DISCORD ==========
+// ======================================== PARAMETRAGES DU BOT DISCORD ========================================
+
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 
 // Token du bot
 const { token } = require('./config.json');
 
-const { Client, Collection, Intents, GatewayIntentBits, Partials } = require('discord.js');
+
+
+
+
+
+
+
 
 // Création d'un nouveau client
 const client = new Client({
-	//intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, Intents.FLAGS.GUILDS, ],
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
-	partials: [Partials.MESSAGE, Partials.CHANNEL, Partials.REACTION],
+	//intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_CONTENT],
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent],
+	//intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 // Récupération des fichiers liés aux events
@@ -29,6 +38,18 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args, client));
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // client.commands = new Collection();
 // const commandsPath = path.join(__dirname, 'slashCommands');

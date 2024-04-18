@@ -1,0 +1,35 @@
+{
+    "receptionChannel": 1230501099136356475,
+    "serverBots": [
+        {
+            "id": 1230512745401815113,
+            "name": "Server Test 1",
+            "avatar": "https://www.phosphore.com/wp-content/uploads/2019/07/JAPAN02.jpg",
+            "roleToPing": "<@&1141437988216246354>"
+        },
+        {
+            "id": 1230512723444629564,
+            "name": "Server Test 2",
+            "avatar": "https://www.pedagojeux.fr/wp-content/uploads/2019/11/1280x720_LoL.jpg",
+            "roleToPing":  "<@&1142093813544910930>"
+        }
+    ],
+    "rolesEquivalents": [
+        { 
+            "serverRole": "<@&1230549908247805974>",
+            "equivalences": ["lol 1A", "1A qq"]
+        },
+        { 
+            "serverRole": "<@&1230549945329778779>",
+            "equivalences": ["lol 2A", "2A bb"]
+        },
+        { 
+            "serverRole": "<@&1230549970730487878>",
+            "equivalences": ["lol 3A", "3A ww"]
+        },
+        {
+            "serverRole": "<@&1230550000732475394>",
+            "equivalences": ["les 4A qq vous faites ?", "4A mm"]
+        }
+    ]
+}

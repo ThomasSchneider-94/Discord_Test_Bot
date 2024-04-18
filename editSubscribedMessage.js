@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, WebhookClient } = require('discord.js');
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -19,12 +19,15 @@ module.exports = {
 
 
             const messageContent = message.content;
+            const channel = message.channel;
             console.log(messageContent);
             if (message.content) {
                 console.log("pong");
-                const channel = message.channel;
                 channel.send("pong");
             }
+
+
+            const webhook = await channel.createWeb
         }
     },
 };
