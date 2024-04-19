@@ -9,19 +9,9 @@ const { Client, GatewayIntentBits, Partials } = require('discord.js');
 // Token du bot
 const { token } = require('./config.json');
 
-
-
-
-
-
-
-
-
 // Création d'un nouveau client
 const client = new Client({
-	//intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_CONTENT],
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent],
-	//intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
@@ -39,17 +29,7 @@ for (const file of eventFiles) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
+// Pour rajouter des slash commands
 
 // client.commands = new Collection();
 // const commandsPath = path.join(__dirname, 'slashCommands');

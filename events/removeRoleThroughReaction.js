@@ -42,62 +42,53 @@ module.exports = {
                         // Si l'utilisateur existe bien
                         if (member) {
                             // On récupère le rôle à ajouter
-                            const roleToRemove = guild.roles.cache.find(role => role.name === emojiToReact.role);
+                            const roleToRemove = await guild.roles.cache.find(role => role.name === emojiToReact.role);
 
                             // Si le rôle existe bien
                             if (roleToRemove) {
-
-                                // J'ai tenté de retirer le rôle général quand les gens n'ont plus de rôle dans cette catégorie, mais ce fut un échec
-
-                                // // Si il existe un rôle général et si l'utilisateur l'a déjà
-                                // if (messsageToReact.generalRole !== "") {
-                                //     // On vérifie qu'il ne reste pas de rôle dans cette catégorie de rôle
-                                //     const rolesBefore = member.roles.cache.map(role => role.name);
-
-                                //     var supprRoleGeneral = true;
-                                //     for (emojiToTest of messsageToReact.emojiToRole) {
-
-
-                                //         console.log(rolesBefore);
-                                //         console.log(emojiToTest.role)
-                                //         console.log(emojiToTest.role in rolesBefore)
-
-
-
-                                //         if (emojiToTest.role in rolesBefore) {
-                                //             console.log(emojiToTest.role)
-                                //             if (emojiToTest.role !== roleToRemove.name) {
-                                //                 supprRoleGeneral = false;
-                                //                 console.log(`Il reste le rôle ${emojiToTest.role} dans la catégorie de rôle ${messsageToReact.generalRole}`)
-                                //                 break;
-                                //             }
-                                //         }
-                                //     }
-                                //     // Si il n'y en a plus, on enlève le rôle, sinon on ne fait rien
-                                //     if (supprRoleGeneral) {
-                                //         const generalRoleToAdd = guild.roles.cache.find(role => role.name === messsageToReact.generalRole);
-                                //         if (generalRoleToAdd) {
-                                //             try {
-                                //                 await member.roles.remove(generalRoleToAdd);
-                                //                 console.log(`Le rôle ${generalRoleToAdd.name} a été retiré à ${user.username}.`);
-                                //                 } catch (error) {
-                                //                 console.error('Erreur lors de l\'attribution du rôle :', error);
-                                //             }
-                                //         }
-                                //     }
-                                // }
-
-                                // On retire le rôle demandé
+                                // On retire le rôle voulu
                                 try {
                                     await member.roles.remove(roleToRemove);
                                     console.log(`Le rôle ${roleToRemove.name} a été retiré à ${user.username}.`);
+                                    // Fetch le member pour avoir les roles mis à jour
+                                    await member.fetch();
                                     } catch (error) {
                                     console.error('Erreur lors du retirement du rôle :', error);
                                 }
-                            }
-                            else {console.log(`Rôle ${emojiToReact.role} non trouvé`)}
 
-                            
+                                console.log(member.roles.cache.map(role => role.name));
+
+                                if (messsageToReact.generalRole !== "") {
+                                    // On vérifie qu'il ne reste pas de rôle dans cette catégorie de rôle
+                                    const roles = member.roles.cache.map(role => role.name);
+                                    let supprRoleGeneral = true;
+
+                                    for (emojiToTest of messsageToReact.emojiToRole) {
+
+                                        for (role of roles) {
+                                            if (role == emojiToTest.role) {
+                                                supprRoleGeneral = false;
+                                                break;
+                                            }
+                                        }
+                                        if (!supprRoleGeneral) { break; }
+                                    }
+                                    
+                                    // Si il n'y en a plus, on enlève le rôle, sinon on ne fait rien
+                                    if (supprRoleGeneral) {
+                                        const generalRoleToRemove = guild.roles.cache.find(role => role.name === messsageToReact.generalRole);
+                                        if (generalRoleToRemove) {
+                                            try {
+                                                await member.roles.remove(generalRoleToRemove);
+                                                console.log(`Le rôle ${generalRoleToRemove.name} a été retiré à ${user.username}.`);
+                                                } catch (error) {
+                                                console.error("Erreur lors de l'attribution du rôle :", error);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else {console.log(`Rôle ${emojiToReact.role} non trouvé`)}                            
                         }
                         else {console.log(`Utilisateur ${user.username} non trouvé`)}
                     }
