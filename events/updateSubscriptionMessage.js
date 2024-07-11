@@ -74,7 +74,7 @@ module.exports = {
                     const [webhookMessageId, serverRole] = tmp.split(':');
 
                     if (webhookMessageId != null) {
-                        if (newMessage.content == "[Original Message Deleted]") {
+                        if (newMessage.content == "[Original Message Deleted]" || newMessage.content == "[Message d'origine supprimé]") {
                             webhookClient.deleteMessage(webhookMessageId)
                             .then(() => { console.log('Message deleted successfully!'); })
                             .catch(console.error);

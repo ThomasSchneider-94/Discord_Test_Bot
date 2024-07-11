@@ -31,7 +31,7 @@ function addRolePing(messageContent, serverRole) {
         }
         i ++;
     }
-    
+
     // On rajoute le rôle qui correspond au server abonné
     return serverRole + "\n" + messageContent;
 }
@@ -68,9 +68,18 @@ module.exports = {
                             name: serverInformations.name,
                             avatar: serverInformations.avatar,
                         })
-                        
-                        //  Ping des rôles
-                        const messageContent = addRolePing(message.content, serverInformations.roleToPing);
+
+                        let messageContent = "";              
+                        if (message.content != "") {
+                            //  Ping des rôles
+                            messageContent = addRolePing(message.content, serverInformations.roleToPing);
+
+                            // Enlève le ping de @everyone
+                            if (messageContent.includes('@everyone')) {
+                                const roleMention = `<@&${message.guild.roles.everyone.id}>`;
+                                messageContent = message.content.replace('@everyone', roleMention);
+                            }
+                        }
                         
                         // ======================================== Pièces jointes ======================================== 
                         // Initialisation du stockage des pièces jointes
