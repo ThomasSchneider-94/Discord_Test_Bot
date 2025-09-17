@@ -1,0 +1,13 @@
+{
+  "name": "discord_test_bot",
+  "version": "1.0.0",
+  "description": "Discor bot for test purpose",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "git repository": "https://github.com/ThomasSchneider-94/Discord_Test_Bot",
+  "author": "Thomas Schneider",
+  "license": "ISC",
+  "type": "module"
+}

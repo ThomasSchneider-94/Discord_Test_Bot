@@ -2,7 +2,7 @@ const { Events, WebhookClient, AttachmentBuilder } = require('discord.js');
 const fs = require('fs');
 
 // URL du Webhook
-const { webhookURL } = require('../config.json');
+const { webhookURL } = require('../../config.json');
 const webhookClient = new WebhookClient({ url: webhookURL });
 
 const { receptionChannel } = require('./config/configTransfertSubscriptions.json');

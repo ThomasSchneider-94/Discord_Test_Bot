@@ -2,12 +2,12 @@
     "reactionToRole" : [
         {
             "messageId": "1142093517485777077",
-            "messageName": "Test Name 1",
+            "name": "Test 1",
             "channelId": "1140293042528596049",
-            "emojiToRole": [
+            "emojisToRoles": [
                 {
                     "emoji": "❤️",
-                    "role": "Test"
+                    "role": "1141397180507230258"
                 },
                 {
                     "emoji": "👍",
@@ -18,9 +18,9 @@
         },
         {
             "messageId": "1142093540336336896",
-            "messageName": "Test Name 2",
+            "name": "Test 2",
             "channelId": "1140293042528596049",
-            "emojiToRole": [
+            "emojisToRoles": [
                 {
                     "emoji": "😅",
                     "role": "Test 3"
@@ -34,9 +34,9 @@
         },
         {
             "messageId": "1142094142894252092",
-            "messageName": "Test Name 3",
+            "name": "Test 3",
             "channelId": "1140293042528596049",
-            "emojiToRole": [
+            "emojisToRoles": [
                 {
                     "emoji": "✅",
                     "role": "Au revoir"
