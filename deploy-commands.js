@@ -2,7 +2,7 @@ import { REST, Routes } from 'discord.js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { configFiles, addConfigFile } from './config.js';
-import { __dirname, __baseModule, importFromModuleFile } from './utils.js';
+import { __dirname, __baseModule, importFromModuleFile, logInfo, logWarning } from './utils.js';
 
 // Grab all the command folders from the commands directory you created earlier
 const { configs } = await importFromModuleFile(__baseModule, '__init__.js');
@@ -12,7 +12,7 @@ if (configs) {
     }
 }
 else {
-    console.log("[WARNING] No configuration files found in base module");
+    logWarning("No configuration files found in base module");
 }
 
 const { token, clientId, guildId } = configFiles.generalConfig;
@@ -22,7 +22,7 @@ const commands = [];
 const modules = readdirSync(join(__dirname, 'modules'));
 
 for (const module of modules) {
-    console.log(`[INFO] Updating module commands : ${module}`);
+    logInfo(`Updating module commands : ${module}`);
 
     const { commands: commandFiles } = await importFromModuleFile(module, '__init__.js');
 
@@ -31,11 +31,11 @@ for (const module of modules) {
             const command = await importFromModuleFile(module, commandFile);  
 
             if (command.data === undefined || command.execute === undefined) {
-                console.log(`[WARNING] The command at ${command.filePath} is missing a required "data" or "execute" property.`);
+                logWarning(`The command at ${command.filePath} is missing a required "data" or "execute" property.`);
 		        continue;
             }
 
-            console.log(`[INFO] | Updating command : ${command.data.name}`);
+            logInfo(`| Updating command : ${command.data.name}`);
             commands.push(command.data.toJSON());
         }
     }

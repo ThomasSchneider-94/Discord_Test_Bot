@@ -1,5 +1,6 @@
 import { Events } from 'discord.js';
 import { configFiles } from '../../../config.js';
+import { logError, logInfo } from '../../../utils.js';
 
 export const name = Events.ClientReady;
 export const once = true;
@@ -14,8 +15,8 @@ export async function execute(client) {
         try {
             await channel.messages.fetch(message.messageId);
         } catch (error) {
-             console.error(`[ERROR] reaction_to_role - Error while fetching the message ${message.name}: ${error.message}`);
+            logError(`reaction_to_role - Error while fetching the message ${message.name}: ${error.message}`);
         }
     }
-    console.log('[INFO] reaction_to_role - READY');
+    logInfo('reaction_to_role - READY');
 }
