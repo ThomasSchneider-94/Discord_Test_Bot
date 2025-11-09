@@ -1,11 +1,12 @@
 import { Events } from 'discord.js';
-import { configFiles } from '../../../config.js';
+
+import { config } from '../../../config.js';
 
 export const name = Events.MessageReactionRemove;
 export const once = false;
 
 export async function execute(reaction, user) {
-    const { reactionToRole } = configFiles.reaction_to_role;
+    const { reactionToRole } = config.reaction_to_role;
 
     try {
         // When reaction added, wait for all informations

@@ -1,7 +1,8 @@
 import { REST, Routes } from 'discord.js';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { configFiles, addConfigFile } from './config.js';
+
+import { config, addConfigFile } from './config.js';
 import { __dirname, __baseModule, importFromModuleFile, logInfo, logWarning } from './utils.js';
 
 // Grab all the command folders from the commands directory you created earlier
@@ -15,7 +16,7 @@ else {
     logWarning("No configuration files found in base module");
 }
 
-const { token, clientId, guildId } = configFiles.generalConfig;
+const { token, clientId, guildId } = config.generalConfig;
 const commands = [];
 
 // Grab all the command files
@@ -28,7 +29,7 @@ for (const module of modules) {
 
     if (commandFiles) {
         for(const commandFile of commandFiles) {
-            const command = await importFromModuleFile(module, commandFile);  
+            const command = await importFromModuleFile(module, 'commands', commandFile);
 
             if (command.data === undefined || command.execute === undefined) {
                 logWarning(`The command at ${command.filePath} is missing a required "data" or "execute" property.`);

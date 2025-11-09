@@ -1,8 +1,9 @@
+export const moduleName = 'reaction_to_role';
 export const events = [
-    'events/ready.js',
-    'events/add_role.js',
-    'events/remove_role.js'
+    'ready.js',
+    'add_role.js',
+    'remove_role.js'
 ];
 export const configs = [
-    'config/reaction_to_role.json'
+    'reaction_to_role.json'
 ];

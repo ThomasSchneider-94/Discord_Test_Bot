@@ -9,5 +9,8 @@
   "git repository": "https://github.com/ThomasSchneider-94/Discord_Test_Bot",
   "author": "Thomas Schneider",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
 }

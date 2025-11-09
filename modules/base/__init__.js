@@ -1,6 +1,7 @@
+export const moduleName = 'base';
 export const events = [
-    'events/handle_command.js',
+    'handle_command.js',
 ];
 export const configs = [
-    'config/generalConfig.json'
+    'generalConfig.json'
 ];

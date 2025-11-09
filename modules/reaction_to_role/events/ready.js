@@ -1,5 +1,6 @@
 import { Events } from 'discord.js';
-import { configFiles } from '../../../config.js';
+
+import { config } from '../../../config.js';
 import { logError, logInfo } from '../../../utils.js';
 
 export const name = Events.ClientReady;
@@ -7,7 +8,7 @@ export const once = true;
 
 export async function execute(client) {
 
-    const { reactionToRole }  = configFiles.reaction_to_role
+    const { reactionToRole }  = config.reaction_to_role
 
     // Load messages to check
     for (const message of reactionToRole) {

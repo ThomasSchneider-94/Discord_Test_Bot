@@ -1,8 +1,9 @@
 import { readdirSync } from 'fs';
 import { join } from 'path';
 import { Client, Collection, GatewayIntentBits, Partials, Events } from 'discord.js';
+
 import { importFromModuleFile, __dirname, __baseModule, logError, logWarning, logInfo } from './utils.js';
-import { configFiles, addConfigFile } from './config.js';
+import { config, addConfigFile } from './config.js';
 
 /// Handle command line arguments
 //#region Command Line Arguments
@@ -89,25 +90,30 @@ else {
 /// Load modules
 const loadModules = async () => {
 	for (const module of modules) {
-		logInfo(`Loading module: ${module}`);
+		
+		const { moduleName, configs: configFiles, events: eventFiles, commands: commandFiles } = await importFromModuleFile(module, '__init__.js');
 
-		const { configs: configFiles, events: eventFiles, commands: commandFiles } = await importFromModuleFile(module, '__init__.js');
+		if (!moduleName) {
+			logWarning(`Module ${module} is missing a moduleName export in its __init__.js`);
+			continue;
+		}
+		logInfo(`Loading module: ${moduleName}`);
 
 		if (configFiles) {
 			for(const configFile of configFiles) {
-				addConfigFile(module, configFile);
+				addConfigFile(moduleName, configFile);
 			}
 		}
 
 		if (eventFiles) {
 			for(const eventFile of eventFiles) {
-				addEvent(await importFromModuleFile(module, eventFile));
+				addEvent(await importFromModuleFile(module, 'events', eventFile));
 			}
 		}
 
 		if (commandFiles) {
 			for(const commandFile of commandFiles) {
-				addCommand(await importFromModuleFile(module, commandFile));
+				addCommand(await importFromModuleFile(module, 'commands', commandFile));
 			}
 		}
 	}
@@ -144,5 +150,5 @@ function addCommand(command) {
 await loadModules();
 
 /// Login
-const { token } = configFiles.generalConfig;
+const { token } = config.generalConfig;
 client.login(token)
