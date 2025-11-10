@@ -31,31 +31,36 @@ export const execute = async (interaction) => {
 	const playerConfig = config['playerConfig'][interaction.user.id];
 	
 	// Check if dice value is correct or if a default dice value exist and if the number of dice given is positive
-	if (!((diceValue && diceValue >= 0) || (playerConfig && playerConfig.defaultValue)) || diceCount < 1) {
+	if (!((diceValue && diceValue >= 0) || (playerConfig && playerConfig.defaultValue)) || (diceCount && diceCount < 1)) {
 		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice. Number of dice must be at least 1.');
 		return;
 	}
-	
+
+	const dump = await rollAndDump(diceValue, diceCount, interaction.options.getInteger('special-dices'), interaction.options.getInteger('bonus'), playerConfig);
+
+	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
+	};
+
+export async function rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig) {
 	// Prioterize the given dice value if valid
-	diceValue = (diceValue && diceValue >= 0) ? diceValue : playerConfig.defaultValue; 
+	diceValue = (diceValue && diceValue >= 0) ? diceValue : playerConfig.defaultValue;
+	// Prioterize the given dice count if valid, else 1
+	diceCount = diceCount ? diceCount : 1;
 	// If playerconfig.defaultColor exist, use it. Else use base color
 	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR_DIRECTORY;
 	// Prioterize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
-	let specialCount = interaction.options.getInteger('special-dices');
 	if (!(specialCount && specialCount >= 0)) {
 		if (playerConfig && playerConfig.specialCount) { specialCount = playerConfig.specialCount; }
 		else { specialCount = 0; }
 	}
 	// If playerconfig.specialColor exist, use it. Else use base color
 	const specialColor = (playerConfig && playerConfig.specialColor) ? playerConfig.specialColor : BASE_COLOR_DIRECTORY;
-	const bonus = interaction.options.getInteger('bonus') || 0;
+	bonus = bonus ? bonus : 0;
 
 	const results = rollDices(diceCount, diceValue);
 
-	const dump = await dumpResults(results, bonus, diceValue, defaultColor, specialCount, specialColor);
-
-	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
-	};
+	return await dumpResults(results, bonus, diceValue, defaultColor, specialCount, specialColor);
+}	
 //#endregion COMMAND DEFINITION
 
 export function rollDices(diceCount, diceValue) {
