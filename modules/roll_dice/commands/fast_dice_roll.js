@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import { checkConstraints, rollDices, dumpResults } from './dice_roll.js';
+import { rollDices, dumpResults } from './dice_roll.js';
 
 export const data = new SlashCommandBuilder()
 	.setName('froll')
@@ -17,7 +17,7 @@ export const execute = async (interaction) => {
 	// If no d is present, assume it's a single dice roll with the given type
 	let diceValue = args.includes('d') || args.includes('+') ? Number(args.split('+')[0].split('d')[1]) : Number(args);
 
-	({ numberOfDice, diceValue } = checkConstraints(numberOfDice, diceValue));
+	({ numberOfDice, diceValue } = (0, 0));
 	const results = rollDices(numberOfDice, diceValue);
 	await interaction.reply(dumpResults(results, bonus));
 };

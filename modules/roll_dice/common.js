@@ -1,13 +1,11 @@
 import { updateConfig } from '../../config.js';
 import { moduleName } from './__init__.js';
 
-export const diceFiles = ['d4.png', 'd6.png', 'd8.png', 'd10.png', 'd12.png', 'd20.png'];
+/// CONSTANT
+export const DICE_FILES = ['d4.png', 'd6.png', 'd8.png', 'd10.png', 'd12.png', 'd20.png'];
+export const DICE_VALUES = [4, 6, 8, 10, 12, 20];
 
-export function savePlayerConfig(userId, updateValue) {
-    updateConfig(moduleName, 'playerConfig', userId, updateValue, true);
-}
-
-export const autoCompleteColorNames = [
+export const AUTO_COMPLETE_COLOR_NAMES = [
     'Black',       // #000000
     'Grey',        // #808080
     'White',       // #ffffff
@@ -23,7 +21,7 @@ export const autoCompleteColorNames = [
     'Pink'         // #ff00ff
     ];
 
-const autoCompleteColorHex = {
+const AUTO_COMPLETE_COLOR_HEX = {
     'Black': '#000000',
     'Grey': '#808080',
     'White': '#ffffff',
@@ -39,8 +37,15 @@ const autoCompleteColorHex = {
     'Pink': '#ff00ff'
 };
 
+export const BASE_COLOR_DIRECTORY = '#ffffff';
+
+export const NUMBER_SPACING = 2;
+export const NUMBER_MAX_WIDTH = 150;
+export const MAX_DICE_PER_LINE = 10;
+
+/// FUNCTION
 export function getHexaColor(color) {
-    for (const [name, hex] of Object.entries(autoCompleteColorHex)) {
+    for (const [name, hex] of Object.entries(AUTO_COMPLETE_COLOR_HEX)) {
         if (name === color) {
             return hex;
         }
@@ -50,4 +55,22 @@ export function getHexaColor(color) {
         return color.toLowerCase();
     }
     return false;
+}
+
+export function savePlayerConfig(userId, updateValue) {
+    updateConfig(moduleName, 'playerConfig', userId, updateValue, true);
+}
+
+export function mapImagesHorizontaly(images, spacing = 0) {
+    let offsetX = 0;
+
+    return images.map(img => {
+        const layer = {
+            input: img.data,
+            top: 0,
+            left: offsetX
+        };
+        offsetX += (img.info.width + spacing);
+        return layer;
+    });
 }
