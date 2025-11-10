@@ -1,4 +1,6 @@
-import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
+// import { joinVoiceChannel } from '@discordjs/voice';
+
 import sharp from 'sharp';
 import { readdirSync } from 'fs';
 
@@ -24,5 +26,11 @@ export const data = new SlashCommandBuilder()
 				{ name: 'Skip', value: 'skip' },
 			),);
 
-export const execute = async (interaction) => {};
+export const execute = async (interaction) => {
+	// const connection = joinVoiceChannel({
+	// 	channelId: '1437515373334233198',
+	// 	guildId: interaction.guildId,
+	// 	adapterCreator: channel.guild.voiceAdapterCreator,
+	// });	
+};
 //#endregion COMMAND DEFINITION

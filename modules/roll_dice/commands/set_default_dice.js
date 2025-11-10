@@ -33,7 +33,7 @@ export const execute = async (interaction) => {
 
     if (value && value > 0 && !hexColor) {
         savePlayerConfig(interaction.user.id, { defaultValue: value });
-        await interaction.reply(`✅ Default dice value set to **${value}**.`);
+        await interaction.reply({ content: `✅ Default dice value set to **${value}**.`, ephemeral: true });
     }
     else {
         const diceSet = await createDiceSet(hexColor, true);
@@ -41,11 +41,11 @@ export const execute = async (interaction) => {
 
         if (value && value >= 0) {
             savePlayerConfig(interaction.user.id, { defaultValue: value, defaultColor: hexColor });
-            await replyWithAttachments(interaction, `✅ Default dice value set to **${value}** and color set to **` + interaction.options.getString('color') + '**!', [attachment]);
+            await replyWithAttachments(interaction, `✅ Default dice value set to **${value}** and color set to **` + interaction.options.getString('color') + '**!', [attachment], true);
         }
         else {
             savePlayerConfig(interaction.user.id, { defaultColor: hexColor });
-            await replyWithAttachments(interaction, '✅ Default dice color set to **' + interaction.options.getString('color') + '**!', [attachment]);
+            await replyWithAttachments(interaction, '✅ Default dice color set to **' + interaction.options.getString('color') + '**!', [attachment], true);
         }       
     }
 }

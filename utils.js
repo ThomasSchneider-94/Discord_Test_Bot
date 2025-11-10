@@ -64,8 +64,8 @@ export async function replyError(interaction, message) {
 	await interaction.reply({ content: `❌ ${message}`, ephemeral: true });
 }
 
-export async function replyWithAttachments(interaction, message, attachments = []) {
-	await interaction.reply({ content: message, files: attachments });
+export async function replyWithAttachments(interaction, message, attachments = [], ephemeral = false) {
+	await interaction.reply({ content: message, files: attachments, ephemeral: ephemeral });
 }
 
 export const autocompleteArguments = async (interaction, choices) => {

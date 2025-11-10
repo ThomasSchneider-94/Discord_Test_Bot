@@ -78,7 +78,7 @@ export async function dumpResults(results, bonus, diceValue, defaultColor, speci
 	let content = "";
 	if (dumpConfig.listResults) { content += `Results : [${results.join(', ')}]\n`; }
 	if (dumpConfig.totalValue) { content += `${(bonus == 0 ? '' : `Bonus : ${bonus} -`)} Total : ${results.reduce((a, b) => a + b, 0) + bonus}\n` }
-	if (dumpConfig.aboveAverage) { content += `Above average : ${results.filter(result => result >= diceValue / 2).length}\n`; }
+	if (dumpConfig.aboveAverage) { content += `Above average : ${results.filter(result => result >= (diceValue+1) / 2).length}\n`; }
 
 	let attachment = new AttachmentBuilder();
 	if (dumpConfig.visualResults) {
@@ -196,11 +196,11 @@ function mapImages(images, spacing = 0) {
         };
         offsetX += (img.info.width + spacing);
 
-		if (i == MAX_DICE_PER_LINE - 1) {
+		if (i%MAX_DICE_PER_LINE == MAX_DICE_PER_LINE - 1) {
 			offsetX = 0;
 			offsetY += img.info.height;
 		}
-		
+
         return layer;
     });
 }

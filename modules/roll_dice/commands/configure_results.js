@@ -23,7 +23,7 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction) => {
     const listResults = interaction.options.getBoolean('list-results');
     const totalValue = interaction.options.getBoolean('total-value');
-    const aboveAverage = interaction.options.getBoolean('aboveAverage');
+    const aboveAverage = interaction.options.getBoolean('above-average');
     const visualResults = interaction.options.getBoolean('visual-results');
 
     const current = config['dumpResultConfig'];
@@ -35,5 +35,5 @@ export const execute = async (interaction) => {
     };
     writeConfig(moduleName, 'dumpResultConfig');
 
-    interaction.reply(`✅ Result mode updated.`)
+    interaction.reply(`New result mode - **List**:  ${config['dumpResultConfig'].listResults ? '✅' : '❌'} **Total** :  ${config['dumpResultConfig'].totalValue ? '✅' : '❌'} **Above average** :  ${config['dumpResultConfig'].aboveAverage ? '✅' : '❌'} **Visual** :  ${config['dumpResultConfig'].visualResults ? '✅' : '❌'}.`)
 }

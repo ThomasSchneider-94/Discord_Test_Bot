@@ -31,7 +31,7 @@ export const execute = async (interaction) => {
 
     if (count && count >= 0 && !hexColor) {
         savePlayerConfig(interaction.user.id, { specialCount: count });
-        await interaction.reply(`✅ Special dice count set to **${count}**.`);
+        await interaction.reply({ content: `✅ Special dice count set to **${count}**.`, ephemeral: true });
     }
     else {
         const diceSet = await createDiceSet(hexColor, true);
@@ -39,11 +39,11 @@ export const execute = async (interaction) => {
 
         if (count && count >= 0) {
             savePlayerConfig(interaction.user.id, { specialCount: count, specialColor: hexColor });
-            await replyWithAttachments(interaction, `✅ Special dice count set to **${count}** and color set to **` + interaction.options.getString('color') + '**!', [attachment]);
+            await replyWithAttachments(interaction, `✅ Special dice count set to **${count}** and color set to **` + interaction.options.getString('color') + '**!', [attachment], true);
         }
         else {
             savePlayerConfig(interaction.user.id, { specialColor: hexColor });
-            await replyWithAttachments(interaction, '✅ Special dice color set to **' + interaction.options.getString('color') + '**!', [attachment]);
+            await replyWithAttachments(interaction, '✅ Special dice color set to **' + interaction.options.getString('color') + '**!', [attachment], true);
         }       
     }
 };
