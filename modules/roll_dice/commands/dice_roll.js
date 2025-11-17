@@ -49,8 +49,10 @@ export async function rollAndDump(diceValue, diceCount, specialCount, bonus, pla
 	// If playerconfig.defaultColor exist, use it. Else use base color
 	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR_DIRECTORY;
 	// Prioterize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
-	if (!(specialCount && specialCount >= 0)) {
-		if (playerConfig && playerConfig.specialCount) { specialCount = playerConfig.specialCount; }
+
+	if (specialCount) {
+		if (specialCount >= 0) {}
+		else if (playerConfig && playerConfig.specialCount) { specialCount = playerConfig.specialCount; }
 		else { specialCount = 0; }
 	}
 	// If playerconfig.specialColor exist, use it. Else use base color
