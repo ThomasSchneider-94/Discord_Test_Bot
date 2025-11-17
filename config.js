@@ -2,14 +2,14 @@ import { readFileSync } from 'fs';
 import { basename } from 'path';
 import { writeFileSync } from 'fs';
 
-import { __dirname, getModuleConfig } from './utils.js';
+import { __dirname, getModuleConfig, logInfo } from './utils.js';
 
 const configs = {};
 
 export function addConfigFile(module, file) {
     const key = basename(file, '.json');
     configs[key] = JSON.parse(readFileSync(getModuleConfig(module, file), 'utf-8'));
-    //console.log(`Configuration file "${join(module, file)}" added`)
+    //logInfo(`Configuration file "${join(module, file)}" added`)
 }
 
 export function updateConfig(moduleName, configKey, key, updateValue, write = false) {

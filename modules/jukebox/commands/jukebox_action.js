@@ -1,36 +1,62 @@
 import { SlashCommandBuilder } from 'discord.js';
-// import { joinVoiceChannel } from '@discordjs/voice';
 
-import sharp from 'sharp';
-import { readdirSync } from 'fs';
-
-import { moduleName } from '../__init__.js';
-import { replyError, getModuleData, logInfo, replyWithAttachments } from '../../../utils.js';
-import { DICE_FILES, DICE_VALUES, mapImagesHorizontaly, NUMBER_SPACING, NUMBER_MAX_WIDTH, MAX_DICE_PER_LINE, BASE_COLOR_DIRECTORY } from '../common.js'
-import { config } from '../../../config.js'
+import { replyError } from '../../../utils.js';
+import { guildQueues } from '../guildQueue.js'
 
 //#region COMMAND DEFINITION
 export const data = new SlashCommandBuilder()
 	.setName('jb')
-	.setDescription('Activate the jukebox')
+	.setDescription('Jukebox actions')
     .addStringOption(option =>
 		option.setName('action')
-			.setDescription('Type of dice to roll')
+			.setDescription('Jukebox action')
             .setRequired(true)
             .addChoices(
-				{ name: 'Start', value: 'start' },
 				{ name: 'Play', value: 'play' },
 				{ name: 'Pause', value: 'pause' },
-				{ name: 'Add', value: 'add' },
 				{ name: 'Stop', value: 'stop' },
 				{ name: 'Skip', value: 'skip' },
-			),);
+				{ name: 'Now playing', value: 'now-playing' },
+				{ name: 'List', value: 'list' },
+			));
 
 export const execute = async (interaction) => {
-	// const connection = joinVoiceChannel({
-	// 	channelId: '1437515373334233198',
-	// 	guildId: interaction.guildId,
-	// 	adapterCreator: channel.guild.voiceAdapterCreator,
-	// });	
+	const action = interaction.options.getString('action');
+
+	const queue = guildQueues.get(interaction.guild.id);
+
+	if (!queue) {
+		replyError(interaction, 'Their is currently no jukebox');
+		return;
+	}
+
+	switch (action) {
+		case 'play':
+			queue.resume();
+            interaction.reply("▶️ Play");
+			break;
+		case 'pause':
+			queue.pause();
+            interaction.reply("⏸ Paused");
+			break;
+		case 'stop':
+			queue?.stop();
+            interaction.reply("⏹ Stopped music and cleared queue");
+			break;
+		case 'skip':
+			queue.skip();
+			interaction.reply("⏭ Skipped current song. Now playing : " + queue.getCurrent());
+			break;
+		case 'now-playing':
+			interaction.reply("🎵 Now playing : " + queue.getCurrent());
+			break;
+		case 'list':
+			interaction.reply("🎵 Now playing : " + queue.getCurrent() + "\n Playlist :\n" + queue.getQueue());
+			break;
+		default:
+			replyError(interaction, 'Unknown action');
+			break;
+	}
 };
 //#endregion COMMAND DEFINITION
+

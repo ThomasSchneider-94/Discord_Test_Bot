@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import { join } from 'path';
-import { Client, Collection, GatewayIntentBits, Partials, Events } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 
 import { importFromModuleFile, __dirname, __baseModule, logError, logWarning, logInfo } from './utils.js';
 import { config, addConfigFile } from './config.js';
@@ -48,7 +48,8 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.MessageContent
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildVoiceStates
 	],
 	partials: [
 		Partials.Message,

@@ -12,6 +12,7 @@
   "type": "module",
   "dependencies": {
     "@discordjs/voice": "^0.18.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "ytdlp-nodejs": "^2.3.5"
   }
 }
