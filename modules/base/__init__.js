@@ -3,5 +3,5 @@ export const events = [
     'handle_command.js',
 ];
 export const configs = [
-    'generalConfig.json'
+    'secretConfig.json'
 ];

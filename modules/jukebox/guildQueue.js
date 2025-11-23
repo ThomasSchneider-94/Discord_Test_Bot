@@ -7,7 +7,6 @@ export const guildQueues = new Map();
 
 // Each guild queue stores:
 // - player: AudioPlayer
-// - connection: VoiceConnection
 // - songs: array of { title, url }
 // - current: current song
 export class GuildQueue {

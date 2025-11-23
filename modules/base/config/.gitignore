@@ -1,0 +1,4 @@
+# Ignore everything in this directory
+secretConfig.json
+# Except this file
+!.gitignore

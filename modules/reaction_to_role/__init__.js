@@ -1,4 +1,4 @@
-export const moduleName = 'reaction_to_role';
+//export const moduleName = 'reaction_to_role';
 export const events = [
     'ready.js',
     'add_role.js',

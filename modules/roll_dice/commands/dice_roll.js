@@ -42,13 +42,13 @@ export const execute = async (interaction) => {
 	};
 
 export async function rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig) {
-	// Prioterize the given dice value if valid
+	// Prioritize the given dice value if valid
 	diceValue = (diceValue && diceValue >= 0) ? diceValue : playerConfig.defaultValue;
-	// Prioterize the given dice count if valid, else 1
+	// Prioritize the given dice count if valid, else 1
 	diceCount = diceCount ? diceCount : 1;
 	// If playerconfig.defaultColor exist, use it. Else use base color
 	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR_DIRECTORY;
-	// Prioterize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
+	// Prioritize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
 
 	if (specialCount) {
 		if (specialCount >= 0) {}

@@ -1,6 +1,6 @@
 # Jukebox
 
-The **Jukebox** module allows you to play music from YouTube in a voice channel.
+The `jukebox` module allows you to play music from YouTube in a voice channel.
 
 ## Functions
 
