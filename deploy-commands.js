@@ -16,7 +16,7 @@ else {
     logWarning("No configuration files found in base module");
 }
 
-const { token, clientId, guildId } = config.generalConfig;
+const { token, clientId, guildId } = config.secretConfig;
 const commands = [];
 
 // Grab all the command files

@@ -31,17 +31,13 @@ export const execute = async (interaction) => {
         guildQueues.set(interaction.guild.id, queue);
     }
 
-    const ytdlp = new YtDlp();
-    await interaction.deferReply();
+    const song_url = queue.enqueue(url);
 
-    const jsonString = await ytdlp._executeAsync(
-        [url, "--dump-single-json"]
-    );
-    const info = JSON.parse(jsonString);
-    const title = info.fulltitle || info.title || url;
-
-    queue.enqueue({ url, title });
-
-    await interaction.editReply(`🎵 Added to queue: **[${title}](<${url}>)**`);
-};
+    if (song_url) {
+        interaction.reply(`🎵 Added to queue: ${song_url}`);
+    }
+    else {
+        interaction.replyError(`Failed to add to queue`);
+    }
+}
 //#endregion COMMAND DEFINITION

@@ -156,5 +156,5 @@ function addCommand(command) {
 await loadModules();
 
 /// Login
-const { token } = config.generalConfig;
+const { token } = config.secretConfig;
 client.login(token)
