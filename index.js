@@ -33,11 +33,16 @@ if (options.includes('--help') || options.includes('-h')) {
 
 if (options.includes('--list-modules') || options.includes('-l')) {
 	const modules = readdirSync(join(__dirname, 'modules'));
-	console.log("Available modules:");
+	let dump = "Available modules:\n"
+
 	for (const module of modules.filter(m => m != __baseModule)) {
-		console.log(` - ${module}`);
+		const { moduleName } = await importFromModuleFile(module, '__init__.js');
+
+		if (moduleName) {
+			dump += ` - ${module}\n`
+		}
 	}
-	console.log("\n");
+	console.log(dump);
 	process.exit(0);
 }
 //#endregion Command Line Arguments
