@@ -70,7 +70,7 @@ node ./index.js
 - `--help`, `-h`  
 &nbsp;&nbsp;&nbsp;&nbsp;Display help information
 - `--modules`, `-m` <module_name>  
-&nbsp;&nbsp;&nbsp;&nbsp;Load specific modules. Default : all modules
+&nbsp;&nbsp;&nbsp;&nbsp;Load specific modules, separated by `,` (e.g. `-m roll_dice,jukebox`). Default : all modules
 - `-list-modules`, `-l`  
 &nbsp;&nbsp;&nbsp;&nbsp;List all available modules
 
