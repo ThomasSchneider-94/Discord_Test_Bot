@@ -4,10 +4,10 @@ Modular Discord Bot is a Discord bot that provides multiple modules, each with i
 
 ## Module List
 
-- [Jukebox](./modules/jukebox/README.md)
-- [Reaction to Role](./modules/reaction_to_role/README.md)
-- [Roll Dice](./modules/roll_dice/README.md)
-- [Subscription Transfer](./modules/subscription_transfert/README.md)
+- [Jukebox](./modules/jukebox/)
+- [Reaction to Role](./modules/reaction_to_role/)
+- [Roll Dice](./modules/roll_dice/)
+- [Subscription Transfer](./modules/subscription_transfert/)
 
 ## Installation
 
