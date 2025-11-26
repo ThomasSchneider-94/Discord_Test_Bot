@@ -5,36 +5,20 @@ import { moduleName } from './__init__.js';
 export const DICE_FILES = ['d4.png', 'd6.png', 'd8.png', 'd10.png', 'd12.png', 'd20.png'];
 export const DICE_VALUES = [4, 6, 8, 10, 12, 20];
 
-export const AUTO_COMPLETE_COLOR_NAMES = [
-    'Black',       // #000000
-    'Grey',        // #808080
-    'White',       // #ffffff
-    'Red',         // #ff0000
-    'Orange',      // #ff7f00
-    'Yellow',      // #d1d1bdff
-    'Light Green', // #7fff00
-    'Green',       // #00ff00
-    'Light Blue',  // #00ffff
-    'Cyan',        // #007fff
-    'Blue',        // #0000ff
-    'Purple',      // #7f00ff
-    'Pink'         // #ff00ff
-    ];
-
-const AUTO_COMPLETE_COLOR_HEX = {
-    'Black': '#000000',
-    'Grey': '#808080',
-    'White': '#ffffff',
-    'Red': '#ff0000',
-    'Orange': '#ff7f00',
-    'Yellow': '#ffff00',
-    'Light Green': '#7fff00',
-    'Green': '#00ff00',
-    'Light Blue': '#00ffff',
-    'Cyan': '#007fff',
-    'Blue': '#0000ff',
-    'Purple': '#7f00ff',
-    'Pink': '#ff00ff'
+export const AUTO_COMPLETE_COLOR_HEX = {
+    'black': '#000000',
+    'grey': '#808080',
+    'white': '#ffffff',
+    'red': '#ff0000',
+    'orange': '#ff7f00',
+    'yellow': '#ffff00',
+    'light green': '#7fff00',
+    'green': '#00ff00',
+    'light blue': '#00ffff',
+    'cyan': '#007fff',
+    'blue': '#0000ff',
+    'purple': '#7f00ff',
+    'pink': '#ff00ff'
 };
 
 export const BASE_COLOR_DIRECTORY = '#ffffff';
@@ -45,8 +29,9 @@ export const MAX_DICE_PER_LINE = 10;
 
 /// FUNCTION
 export function getHexaColor(color) {
+    if (!color) { return false; }
     for (const [name, hex] of Object.entries(AUTO_COMPLETE_COLOR_HEX)) {
-        if (name === color) {
+        if (name.toLowerCase() === color.toLowerCase()) {
             return hex;
         }
     }

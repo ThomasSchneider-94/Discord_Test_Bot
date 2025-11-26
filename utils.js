@@ -1,3 +1,4 @@
+import { MessageFlags } from 'discord.js';
 import { dirname, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
@@ -61,11 +62,11 @@ export function rgbToHex(rgb) {
 
 /// Command reply helpers
 export async function replyError(interaction, message) {
-	await interaction.reply({ content: `❌ ${message}`, ephemeral: true });
+	await interaction.reply({ content: `❌ ${message}`, flags: MessageFlags.Ephemeral });
 }
 
 export async function replyWithAttachments(interaction, message, attachments = [], ephemeral = false) {
-	await interaction.reply({ content: message, files: attachments, ephemeral: ephemeral });
+	await interaction.reply({ content: message, files: attachments, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
 }
 
 export const autocompleteArguments = async (interaction, choices) => {

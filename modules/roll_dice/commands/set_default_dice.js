@@ -1,10 +1,10 @@
-import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
+import { SlashCommandBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
 import sharp from 'sharp';
 import { readdirSync, mkdirSync } from 'fs';
 
 import { moduleName } from '../__init__.js';
 import { logInfo, getModuleData, hexToRgb, replyError, replyWithAttachments, autocompleteArguments } from '../../../utils.js';
-import { AUTO_COMPLETE_COLOR_NAMES, getHexaColor, savePlayerConfig, DICE_FILES, mapImagesHorizontaly, BASE_COLOR_DIRECTORY } from '../common.js';
+import { getHexaColor, savePlayerConfig, mapImagesHorizontaly, AUTO_COMPLETE_COLOR_HEX, DICE_FILES, BASE_COLOR_DIRECTORY } from '../common.js';
 
 //#region COMMAND DEFINITION
 export const data = new SlashCommandBuilder()
@@ -19,7 +19,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('Default value of the dice'));
 
 export const autocomplete = async (interaction) => {
-	autocompleteArguments(interaction, AUTO_COMPLETE_COLOR_NAMES);
+	autocompleteArguments(interaction, Object.keys(AUTO_COMPLETE_COLOR_HEX));
 };
 
 export const execute = async (interaction) => {
@@ -33,7 +33,7 @@ export const execute = async (interaction) => {
 
     if (value && value > 0 && !hexColor) {
         savePlayerConfig(interaction.user.id, { defaultValue: value });
-        await interaction.reply({ content: `✅ Default dice value set to **${value}**.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Default dice value set to **${value}**.`, flags: MessageFlags.Ephemeral });
     }
     else {
         const diceSet = await createDiceSet(hexColor, true);
