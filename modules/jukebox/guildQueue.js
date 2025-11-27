@@ -2,8 +2,6 @@ import { createAudioPlayer, createAudioResource, AudioPlayerStatus } from '@disc
 import { YtDlp } from 'ytdlp-nodejs';
 import { PassThrough } from 'stream';
 
-import { logError } from '../../utils.js';
-
 // Map of guildId → queue object
 export const guildQueues = new Map();
 

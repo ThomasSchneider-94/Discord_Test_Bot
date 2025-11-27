@@ -47,8 +47,18 @@ export const execute = async (interaction) => {
 		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice. Number of dice must be at least 1.');
 		return;
 	}
-	
-	const dump = await rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig);
-	
-	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
+
+	// Defer reply if a lot of dices are rolled
+	if (diceValue > 50 && diceCount >= 50) {
+		await interaction.deferReply();
+
+		const dump = await rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig);
+
+		await interaction.editReply({ content: dump.content, files: [dump.attachment]});
+	}
+	else {
+		const dump = await rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig);
+
+		replyWithAttachments(interaction, dump.content, [dump.attachment]);
+	}
 };
