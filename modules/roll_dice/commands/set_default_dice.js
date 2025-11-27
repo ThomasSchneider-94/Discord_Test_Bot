@@ -1,10 +1,8 @@
 import { SlashCommandBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
-import sharp from 'sharp';
-import { readdirSync, mkdirSync } from 'fs';
+import { default as sharp } from 'sharp';
 
-import { moduleName } from '../__init__.js';
-import { logInfo, getModuleData, hexToRgb, replyError, replyWithAttachments, autocompleteArguments } from '../../../utils.js';
-import { getHexaColor, savePlayerConfig, mapImagesHorizontaly, AUTO_COMPLETE_COLOR_HEX, DICE_FILES, BASE_COLOR_DIRECTORY } from '../common.js';
+import { hexToRgb, replyError, replyWithAttachments, autocompleteArguments } from '../../../utils.js';
+import { savePlayerConfig, mapImages, colorDie, DICE_FILES } from '../common.js';
 
 //#region COMMAND DEFINITION
 export const data = new SlashCommandBuilder()
@@ -36,8 +34,7 @@ export const execute = async (interaction) => {
         await interaction.reply({ content: `✅ Default dice value set to **${value}**.`, flags: MessageFlags.Ephemeral });
     }
     else {
-        const diceSet = await createDiceSet(hexColor, true);
-        const attachment = new AttachmentBuilder(diceSet, { name: 'dice_set.png' });
+        const attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
 
         if (value && value >= 0) {
             savePlayerConfig(interaction.user.id, { defaultValue: value, defaultColor: hexColor });
@@ -51,53 +48,49 @@ export const execute = async (interaction) => {
 }
 //#endregion COMMAND DEFINITION
 
-//#region CREATE DICE SET
-export async function createDiceSet(hexColor, setReturn = false) {
-    const RgbColor = hexToRgb(hexColor);
-    
-    if (readdirSync(getModuleData(moduleName, 'dices')).includes(hexColor)) {
-        logInfo(`Found dice set for color ${hexColor}`);
-    }
-    else {
-        logInfo(`Creating new dice set for color ${hexColor}`);
+//#region COLORS
+const AUTO_COMPLETE_COLOR_HEX = {
+    'black': '#000000',
+    'grey': '#808080',
+    'white': '#ffffff',
+    'red': '#ff0000',
+    'orange': '#ff7f00',
+    'yellow': '#ffff00',
+    'light green': '#7fff00',
+    'green': '#00ff00',
+    'light blue': '#00ffff',
+    'cyan': '#007fff',
+    'blue': '#0000ff',
+    'purple': '#7f00ff',
+    'pink': '#ff00ff'
+};
 
-        mkdirSync(getModuleData(moduleName, 'dices', hexColor), { recursive: true });
-
-        for (const dice of DICE_FILES) {
-            const { data, info } = await sharp(getModuleData(moduleName, 'dices', BASE_COLOR_DIRECTORY, dice))
-                                            .raw().ensureAlpha().toBuffer({ resolveWithObject: true });
-
-            for (let i = 0; i < data.length; i += 4) {
-                if (data[i] == 255 && data[i + 1] == 255 && data[i + 2] == 255 && data[i + 3] == 255) {
-                    data[i] = RgbColor.r;
-                    data[i + 1] = RgbColor.g;
-                    data[i + 2] = RgbColor.b;
-                }
-            }
-
-            await sharp(data, { raw: info })
-                .toFile(getModuleData(moduleName, 'dices', hexColor, dice));
+export function getHexaColor(color) {
+    if (!color) { return false; }
+    for (const [name, hex] of Object.entries(AUTO_COMPLETE_COLOR_HEX)) {
+        if (name.toLowerCase() === color.toLowerCase()) {
+            return hex;
         }
     }
 
-    if (setReturn) {
-        return showDiceSet(hexColor);
+    if (/^#[0-9a-f]{6}$/i.test(color)) {
+        return color.toLowerCase();
     }
+    return false;
 }
+//#endregion COLORS
 
-async function showDiceSet(hexColor) {
-    // Load all dice images with the specified color
-    const dices = await Promise.all(
-        DICE_FILES.map(async dice => {
-            const image = sharp(getModuleData(moduleName, 'dices', hexColor, dice));
-            const info = await image.metadata();
-            const data = await image.toBuffer();
-            return { data, info };
-        })
-    );
+export async function showDiceSet(hexColor) {
+    // Create a preview image of the dice set
+    const RgbColor = hexToRgb(hexColor);
+    const diceSet = [];    
 
-    const width = dices.reduce((sum, img) => sum + img.info.width, 0);
-    const height = dices.reduce((max, img) => Math.max(max, img.info.height), 0);
+    for (const die of DICE_FILES) {
+        diceSet.push(await colorDie(die, RgbColor));
+    }
+
+    const width = diceSet.reduce((sum, img) => sum + img.info.width, 0);
+    const height = diceSet.reduce((max, img) => Math.max(max, img.info.height), 0);
 
     return await sharp({
         create: {
@@ -106,7 +99,6 @@ async function showDiceSet(hexColor) {
             channels: 4,
             background: { r: 0, g: 0, b: 0, alpha: 0 },
         },
-    }).composite(mapImagesHorizontaly(dices))
-    .png().toBuffer();
+    }).composite(mapImages(diceSet, true, DICE_FILES.length))
+    .png().toBuffer(); 
 }
-//#endregion CREATE DICE SET AND REPLY

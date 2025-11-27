@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
 
-import { replyError, replyWithAttachments, autocompleteArguments } from '../../../utils.js';
-import { createDiceSet } from './set_default_dice.js';
-import { AUTO_COMPLETE_COLOR_HEX, savePlayerConfig, getHexaColor } from '../common.js';
+import { replyError, replyWithAttachments } from '../../../utils.js';
+import { savePlayerConfig } from '../common.js';
+import { showDiceSet, getHexaColor, autocomplete as autocompleteColor } from './set_default_dice.js';
 
 //#region COMMAND DEFINITION
 export const data = new SlashCommandBuilder()
@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('Number of special dices to roll'));
 
 export const autocomplete = async (interaction) => {
-    await autocompleteArguments(interaction, Object.keys(AUTO_COMPLETE_COLOR_HEX));
+    await autocompleteColor(interaction);
 };
 
 export const execute = async (interaction) => {
@@ -34,8 +34,7 @@ export const execute = async (interaction) => {
         await interaction.reply({ content: `✅ Special dice count set to **${count}**.`, flags: MessageFlags.Ephemeral });
     }
     else {
-        const diceSet = await createDiceSet(hexColor, true);
-        const attachment = new AttachmentBuilder(diceSet, { name: 'dice_set.png' });
+        const attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
 
         if (count && count >= 0) {
             savePlayerConfig(interaction.user.id, { specialCount: count, specialColor: hexColor });
