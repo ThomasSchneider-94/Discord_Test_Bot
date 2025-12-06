@@ -18,6 +18,7 @@ export class GuildQueue {
         this.ytdlp = new YtDlp();
         this.songs = [];
         this.current = null;
+        this.loop = false;
 
         // Subscribe player to connection
         connection.subscribe(this.player);
@@ -58,7 +59,14 @@ export class GuildQueue {
     }
 
     async playNext() {
-        const nextSong = this.songs.shift();
+        let nextSong;
+        if (this.loop && this.current) {
+            nextSong = this.current;
+        }
+        else {
+            nextSong = this.songs.shift();
+        }
+
         if (!nextSong) {
             this.current = null;
             return;
@@ -92,6 +100,11 @@ export class GuildQueue {
 
     resume() {
         this.player.unpause();
+    }
+
+    changeLoop() {
+        this.loop = !this.loop;
+        return this.loop;
     }
 
     getCurrent() {
