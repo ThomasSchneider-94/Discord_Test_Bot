@@ -86,7 +86,7 @@ export async function showDiceSet(hexColor) {
     const diceSet = [];    
 
     for (const die of DICE_FILES) {
-        diceSet.push(await colorDie(die, RgbColor));
+        diceSet.push(await colorDie(die, RgbColor, false, false));
     }
 
     const width = diceSet.reduce((sum, img) => sum + img.info.width, 0);
