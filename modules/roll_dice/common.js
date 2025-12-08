@@ -1,6 +1,7 @@
 import { updateConfig } from '../../config.js';
 import { moduleName } from './__init__.js';
 import { getModuleData, hexToRgb } from '../../utils.js';
+import { LRUCache } from '../../utils/LRUCache.js';
 import { default as sharp } from 'sharp';
 
 /// CONSTANT
@@ -12,10 +13,18 @@ export const NUMBER_MAX_WIDTH = 150;
 export const MAX_DICE_PER_LINE = 10;
 export const BASE_COLOR = '#ffffff';
 
+const diceCache = new LRUCache(1);
+
 /// FUNCTION
-export async function colorDie(die, color, hex=false) {
+
+export async function colorDie(die, color, hex=false, useCache=true) {
 	if (hex) {
 		color = hexToRgb(color);
+	}
+
+	if (useCache && diceCache.has(`${die}-${color.r},${color.g},${color.b}`)) {
+		console.log(`Cache hit for ${die}-${color.r},${color.g},${color.b}`);
+		return diceCache.get(`${die}-${color.r},${color.g},${color.b}`);
 	}
 
 	const { data, info } = await sharp(getModuleData(moduleName, 'dice', die))
@@ -29,7 +38,13 @@ export async function colorDie(die, color, hex=false) {
 		}
 	}
 
-	return {data: await sharp(data, { raw: info }).png().toBuffer(), info};
+	const colorDie = {data: await sharp(data, { raw: info }).png().toBuffer(), info};
+	if (useCache) {
+		console.log(`Cache set for ${die}-${color.r},${color.g},${color.b}`);
+		diceCache.set(`${die}-${color.r},${color.g},${color.b}`, colorDie);
+	}
+
+	return colorDie;
 }
 
 export function savePlayerConfig(userId, updateValue) {
