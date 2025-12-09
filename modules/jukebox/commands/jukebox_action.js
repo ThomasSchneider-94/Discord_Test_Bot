@@ -16,6 +16,7 @@ export const data = new SlashCommandBuilder()
 				{ name: 'Pause', value: 'pause' },
 				{ name: 'Stop', value: 'stop' },
 				{ name: 'Skip', value: 'skip' },
+				{ name: 'Play again', value: 'play-again' },
 				{ name: 'Loop', value: 'loop' },
 				{ name: 'Now playing', value: 'now-playing' },
 				{ name: 'List', value: 'list' },
@@ -51,6 +52,10 @@ export const execute = async (interaction) => {
 		case 'loop':
 			const loopState = queue.changeLoop();
 			interaction.reply(loopState ? "🔁 Loop enabled" : "🔁 Loop disabled");
+			break;
+		case 'play-again':
+			queue.playAGain();
+			interaction.reply("▶️ Replaying : " + queue.getCurrent());
 			break;
 		case 'now-playing':
 			interaction.reply("🎵 Now playing : " + queue.getCurrent());

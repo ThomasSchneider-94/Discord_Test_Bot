@@ -12,6 +12,8 @@ export const guildQueues = new Map();
 // - ytdlp: yt-dlp API
 // - songs: array of { url, title }
 // - current: current song
+// - loop: does loop is enabled
+// - forceNext: whether to force next song on idle
 export class GuildQueue {
     constructor(connection) {
         this.player = createAudioPlayer();
@@ -19,6 +21,7 @@ export class GuildQueue {
         this.songs = [];
         this.current = null;
         this.loop = false;
+        this.forceNext = false;
 
         // Subscribe player to connection
         connection.subscribe(this.player);
@@ -60,7 +63,11 @@ export class GuildQueue {
 
     async playNext() {
         let nextSong;
-        if (this.loop && this.current) {
+        if (this.forceNext) {
+            this.forceNext = false;
+            nextSong = this.songs.shift()
+        }
+        else if (this.loop && this.current) {
             nextSong = this.current;
         }
         else {
@@ -86,6 +93,7 @@ export class GuildQueue {
     }
 
     skip() {
+        this.forceNext = true;
         this.player.stop(true);
     }
 
@@ -105,6 +113,13 @@ export class GuildQueue {
     changeLoop() {
         this.loop = !this.loop;
         return this.loop;
+    }
+
+    playAGain() {
+        if (this.current) {
+            this.songs.unshift(this.current);
+            this.player.stop(true);
+        }
     }
 
     getCurrent() {

@@ -3,7 +3,6 @@ import { SlashCommandBuilder } from 'discord.js';
 import { replyError } from '../../../utils.js';
 import { connect } from './jukebox_connect.js';
 import { GuildQueue, guildQueues } from '../guildQueue.js'
-import { YtDlp } from "ytdlp-nodejs";
 
 //#region COMMAND DEFINITION
 export const data = new SlashCommandBuilder()
@@ -37,7 +36,7 @@ export const execute = async (interaction) => {
         interaction.reply(`🎵 Added to queue: ${song_url}`);
     }
     else {
-        interaction.replyError(`Failed to add to queue`);
+        replyError(interaction, `Failed to add to queue`);
     }
 }
 //#endregion COMMAND DEFINITION
