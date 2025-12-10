@@ -25,56 +25,63 @@ export const data = new SlashCommandBuilder()
 			.setDescription('Number of special dices'));
 
 export const execute = async (interaction) => {
-	let diceValue = interaction.options.getInteger('dice');
-	const diceCount = interaction.options.getInteger('dice-count') || 1;
-	
-	const playerConfig = config['playerConfig'][interaction.user.id];
-	
-	// Check if dice value is correct or if a default dice value exist and if the number of dice given is positive
-	if (!((diceValue && diceValue >= 0) || (playerConfig && playerConfig.defaultValue)) || (diceCount && diceCount < 1)) {
-		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice. Number of dice must be at least 1.');
+	const validArgs = analizeArguments(
+		interaction.options.getInteger('dice'), 
+		interaction.options.getInteger('dice-count'), 
+		interaction.options.getInteger('special-dices'), 
+		interaction.options.getInteger('bonus'), 
+		config['playerConfig'][interaction.user.id]
+	);
+
+	if (!validArgs) {
+		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice.');
 		return;
 	}
 
-	const dump = await rollAndDump(diceValue, diceCount, interaction.options.getInteger('special-dices'), interaction.options.getInteger('bonus'), playerConfig);
+	const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
 
 	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
-	};
+};
 
-export async function rollAndDump(diceValue, diceCount, specialCount, bonus, playerConfig) {
+export function analizeArguments(diceValue, diceCount, specialCount, bonus, playerConfig) {
+	// Check if dice value is correct or if a default dice value exist
+	if ((!diceValue || diceValue < 0) && (!playerConfig || !playerConfig.defaultValue)) {
+		return null;
+	}
+
 	// Prioritize the given dice value if valid
-	diceValue = (diceValue && diceValue >= 0) ? diceValue : playerConfig.defaultValue;
+	diceValue = (diceValue && diceValue > 0) ? diceValue : playerConfig.defaultValue;
 	// Prioritize the given dice count if valid, else 1
-	diceCount = diceCount ? diceCount : 1;
+	diceCount = (diceCount && diceCount > 0) ? diceCount : 1;
 	// If playerconfig.defaultColor exist, use it. Else use base color
 	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR_DIRECTORY;
 	// Prioritize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
 
 	if (!specialCount || specialCount < 0) {
-    	if (playerConfig && playerConfig.specialCount) {
-    	    specialCount = playerConfig.specialCount;
-    	}
-    	else {
-    	    specialCount = 0;
-    	}
+		if (specialCount === 0) {}
+		else if (playerConfig && playerConfig.specialCount) {
+			specialCount = playerConfig.specialCount;
+		}
+		else {
+			specialCount = 0;
+		}
 	}
 
-	if (specialCount) {
-		if (specialCount >= 0) {}
-		else if (playerConfig && playerConfig.specialCount) { specialCount = playerConfig.specialCount; }
-		else { specialCount = 0; }
-	}
 	// If playerconfig.specialColor exist, use it. Else use base color
 	const specialColor = (playerConfig && playerConfig.specialColor) ? playerConfig.specialColor : BASE_COLOR_DIRECTORY;
 	bonus = bonus ? bonus : 0;
 
+	return { diceValue, diceCount, specialCount, bonus, defaultColor, specialColor };
+}
+//#endregion COMMAND DEFINITION
+
+export async function rollAndDump(diceValue, diceCount, specialCount, bonus, defaultColor, specialColor) {
 	const results = rollDices(diceCount, diceValue);
 
 	return await dumpResults(results, bonus, diceValue, defaultColor, specialCount, specialColor);
-}	
-//#endregion COMMAND DEFINITION
+}
 
-export function rollDices(diceCount, diceValue) {
+function rollDices(diceCount, diceValue) {
 	const results = [];
 
 	for (let i = 0; i < diceCount; i++) {
@@ -83,7 +90,7 @@ export function rollDices(diceCount, diceValue) {
 	return results;
 }
 
-export async function dumpResults(results, bonus, diceValue, defaultColor, specialCount, specialColor) {
+async function dumpResults(results, bonus, diceValue, defaultColor, specialCount, specialColor) {
 	const dumpConfig = config['dumpResultConfig'];
 
 	let content = "";
