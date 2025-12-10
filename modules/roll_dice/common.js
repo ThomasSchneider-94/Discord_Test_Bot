@@ -13,7 +13,7 @@ export const NUMBER_MAX_WIDTH = 150;
 export const MAX_DICE_PER_LINE = 10;
 export const BASE_COLOR = '#ffffff';
 
-const diceCache = new LRUCache(1);
+const diceCache = new LRUCache(20); // Cache for colored dice images
 
 /// FUNCTION
 
