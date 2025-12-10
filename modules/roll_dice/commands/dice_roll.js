@@ -66,8 +66,6 @@ export function analizeArguments(diceValue, diceCount, specialCount, bonus, play
 	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR;
 	// Prioritize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
 
-	console.log(specialCount);
-
 	if (!specialCount || specialCount < 0) {
 		if (specialCount === 0) {}
 		else if (playerConfig && playerConfig.specialCount) {

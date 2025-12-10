@@ -23,7 +23,7 @@ export async function colorDie(die, color, hex=false, useCache=true) {
 	}
 
 	if (useCache && diceCache.has(`${die}-${color.r},${color.g},${color.b}`)) {
-		logInfo(`Cache hit for ${die}-${color.r},${color.g},${color.b}`);
+		//logInfo(`Cache hit for ${die}-${color.r},${color.g},${color.b}`);
 		return diceCache.get(`${die}-${color.r},${color.g},${color.b}`);
 	}
 
@@ -40,7 +40,7 @@ export async function colorDie(die, color, hex=false, useCache=true) {
 
 	const colorDie = {data: await sharp(data, { raw: info }).png().toBuffer(), info};
 	if (useCache) {
-		logInfo(`Cache set for ${die}-${color.r},${color.g},${color.b}`);
+		//logInfo(`Cache set for ${die}-${color.r},${color.g},${color.b}`);
 		diceCache.set(`${die}-${color.r},${color.g},${color.b}`, colorDie);
 	}
 
