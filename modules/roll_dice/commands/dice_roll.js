@@ -1,10 +1,9 @@
 import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
-import sharp from 'sharp';
-import { readdirSync } from 'fs';
+import { default as sharp } from 'sharp';
 
 import { moduleName } from '../__init__.js';
-import { replyError, getModuleData, logInfo, replyWithAttachments } from '../../../utils.js';
-import { DICE_FILES, DICE_VALUES, mapImagesHorizontaly, NUMBER_SPACING, NUMBER_MAX_WIDTH, MAX_DICE_PER_LINE, BASE_COLOR_DIRECTORY } from '../common.js'
+import { replyError, getModuleData, replyWithAttachments } from '../../../utils.js';
+import { DICE_FILES, DICE_VALUES, mapImages, colorDie, NUMBER_SPACING, NUMBER_MAX_WIDTH, MAX_DICE_PER_LINE, BASE_COLOR } from '../common.js'
 import { config } from '../../../config.js'
 
 //#region COMMAND DEFINITION
@@ -38,9 +37,19 @@ export const execute = async (interaction) => {
 		return;
 	}
 
-	const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+	// Defer reply if a lot of dices are rolled
+	if (validArgs.diceValue > 50 && validArgs.diceCount >= 50) {
+		await interaction.deferReply();
 
-	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
+		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+
+		await interaction.editReply({ content: dump.content, files: [dump.attachment]});
+	}
+	else {
+		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+
+		replyWithAttachments(interaction, dump.content, [dump.attachment]);
+	}
 };
 
 export function analizeArguments(diceValue, diceCount, specialCount, bonus, playerConfig) {
@@ -54,8 +63,10 @@ export function analizeArguments(diceValue, diceCount, specialCount, bonus, play
 	// Prioritize the given dice count if valid, else 1
 	diceCount = (diceCount && diceCount > 0) ? diceCount : 1;
 	// If playerconfig.defaultColor exist, use it. Else use base color
-	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR_DIRECTORY;
+	const defaultColor = (playerConfig && playerConfig.defaultColor) ? playerConfig.defaultColor : BASE_COLOR;
 	// Prioritize the given special number if valid. Else if playerconfig.specialCount exist, use it. Else 0
+
+	console.log(specialCount);
 
 	if (!specialCount || specialCount < 0) {
 		if (specialCount === 0) {}
@@ -68,7 +79,7 @@ export function analizeArguments(diceValue, diceCount, specialCount, bonus, play
 	}
 
 	// If playerconfig.specialColor exist, use it. Else use base color
-	const specialColor = (playerConfig && playerConfig.specialColor) ? playerConfig.specialColor : BASE_COLOR_DIRECTORY;
+	const specialColor = (playerConfig && playerConfig.specialColor) ? playerConfig.specialColor : BASE_COLOR;
 	bonus = bonus ? bonus : 0;
 
 	return { diceValue, diceCount, specialCount, bonus, defaultColor, specialColor };
@@ -107,21 +118,20 @@ async function dumpResults(results, bonus, diceValue, defaultColor, specialCount
 }
 
 //#region CREATE DICE IMAGE
-async function createDiceResult(results, diceValue, defaultColor, specialCount, specialColor) {
+async function createDiceResult(results, dieValue, defaultColor, specialCount, specialColor) {
 	// Create the new numbers
-	await createNumbers(results, NUMBER_SPACING, NUMBER_MAX_WIDTH);
+	const numbers = await createNumbers(results, NUMBER_SPACING, NUMBER_MAX_WIDTH);
 
-	// Select dice type and colors
-	const dice = selectDice(diceValue);
-	const colors = results.map((_, i) => i < specialCount ? specialColor : defaultColor);
-	
-	// Create dices
-	const dices = await createDices(dice, colors, results);
+	// Select die type
+	const die = selectDie(dieValue);
+
+	// Create dice
+	const dice = await createDice(die, results, numbers, defaultColor, specialCount, specialColor);
 
 	// Create final image
-    const width = dices[0].info.width * MAX_DICE_PER_LINE;
-    const height = dices[0].info.height * (1 + Math.floor((results.length - 1) / MAX_DICE_PER_LINE));
 
+    const width = dice[0].info.width * MAX_DICE_PER_LINE;
+    const height = dice[0].info.height * (1 + Math.floor((results.length - 1) / MAX_DICE_PER_LINE));
 	return await sharp({
         create: {
             width,
@@ -129,68 +139,83 @@ async function createDiceResult(results, diceValue, defaultColor, specialCount, 
             channels: 4,
             background: { r: 0, g: 0, b: 0, alpha: 0 },
         },
-    }).composite(mapImages(dices))
+    }).composite(mapImages(dice, true, MAX_DICE_PER_LINE))
     .png().toBuffer();
-} 
-
-async function createNumbers(results, spacing = 2, maxWidth = 150) {
-    const exitingNumbers = readdirSync(getModuleData(moduleName, 'numbers'));
-
-    for (const result of results) {
-        if (!exitingNumbers.includes(result + '.png')) {
-            logInfo(`Creating new number file for ${result}`);
-
-            const numbers = await Promise.all(
-                ('' + result).split('').map(async char => {
-                    const image = sharp(getModuleData(moduleName, 'numbers', char + '.png'));
-                    const info = await image.metadata();
-                    const data = await image.toBuffer();
-                    return { data, info };
-                })
-            );
-
-            const width = numbers.reduce((sum, img) => sum + img.info.width, 0) + spacing * (numbers.length - 1);
-            const height = numbers.reduce((max, img) => Math.max(max, img.info.height), 0);
-
-            const imageBuffer = await sharp({
-                create: {
-                    width,
-                    height,
-                    channels: 4,
-                    background: { r: 0, g: 0, b: 0, alpha: 0 },
-                },
-            }).composite(mapImagesHorizontaly(numbers, spacing)).png().toBuffer();
-
-            let image = sharp(imageBuffer);
-            if (width > maxWidth) {
-                image = image.resize({width: maxWidth})
-            }
-
-            await image.toFile(getModuleData(moduleName, 'numbers', result + '.png'));
-            exitingNumbers.push(`${result}.png`)
-        }
-    }
 }
 
-function selectDice(value) {
-	let diceFile = DICE_FILES[0]
+async function createNumbers(results, spacing = 2, maxWidth = 150) {
+	const numbers = new Map();
+
+    for (const result of results) {
+		if (!numbers.has(result)) {
+			let image;
+			// For single digit numbers, directly load the image
+			if (result <= 9) {
+				image = sharp(getModuleData(moduleName, 'numbers', result + '.png'));
+			}
+			// For multiple digit numbers, create the image
+			else {
+				const numberImages = await Promise.all(
+            	    ('' + result).split('').map(async char => {
+            	        const image = sharp(getModuleData(moduleName, 'numbers', char + '.png'));
+            	        const info = await image.metadata();
+            	        const data = await image.toBuffer();
+            	        return { data, info };
+            	    })
+            	);
+
+            	const width = numberImages.reduce((sum, img) => sum + img.info.width, 0) + spacing * (numberImages.length - 1);
+            	const height = numberImages.reduce((max, img) => Math.max(max, img.info.height), 0);
+
+            	const imageBuffer = sharp({
+            	    create: {
+            	        width,
+            	        height,
+            	        channels: 4,
+            	        background: { r: 0, g: 0, b: 0, alpha: 0 },
+            	    },
+            	}).composite(mapImages(numberImages, true, 9,spacing)).png().toBuffer();
+
+				image = sharp(await imageBuffer);
+            	if (width > maxWidth) {
+                	image = image.resize({width: maxWidth})
+            	}
+			}
+			numbers.set(result, { data: await image.png().toBuffer(), info: await image.metadata()} );
+		}
+	}
+	return numbers;
+}
+
+function selectDie(value) {
+	let dieFile = DICE_FILES[0]
 
 	for (let i = 1; i < DICE_VALUES.length; i++) {
 		if (value >= DICE_VALUES[i]) {
-			diceFile = DICE_FILES[i]
+			dieFile = DICE_FILES[i]
 		}
 		else { break; }
 	}
-	return diceFile;
+	return dieFile;
 }
 
-async function createDices(dice, colors, results) {
-	const dices = await Promise.all(
-		colors.map(async (_, i) => {
-			const image = sharp(getModuleData(moduleName, 'dices', colors[i], dice))
+async function createDice(die, results, numbers, defaultColor = BASE_COLOR, specialCount = 0, specialColor = BASE_COLOR) {
+	// Create base die images
+	let dieImage;
+	let specialDieImage;
+	if (specialCount < results.length) { // Do not color die if all are special
+		dieImage = await colorDie(die, defaultColor, true);
+	}
+	if (specialCount > 0) { // Do not color special die if none are special
+		specialDieImage = await colorDie(die, specialColor, true);
+	}
+
+	return await Promise.all(
+		results.map(async (_, i) => {
+			const image = sharp(i < specialCount ? specialDieImage.data : dieImage.data)
 				.composite([
                 	{
-                    	input: getModuleData(moduleName, 'numbers', results[i] + '.png'),
+                    	input: numbers.get(results[i]).data,
                     	gravity: 'center'
             	    }
             	]);
@@ -199,27 +224,5 @@ async function createDices(dice, colors, results) {
 			return { data, info };
 		})
 	);
-	return dices;
-}
-
-function mapImages(images, spacing = 0) {
-    let offsetX = 0;
-    let offsetY = 0;
-
-    return images.map((img, i) => {
-        const layer = {
-            input: img.data,
-            top: offsetY,
-            left: offsetX
-        };
-        offsetX += (img.info.width + spacing);
-
-		if (i%MAX_DICE_PER_LINE == MAX_DICE_PER_LINE - 1) {
-			offsetX = 0;
-			offsetY += img.info.height;
-		}
-
-        return layer;
-    });
 }
 //#endregion CREATE DICE IMAGE

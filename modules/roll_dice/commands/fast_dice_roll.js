@@ -51,7 +51,17 @@ export const execute = async (interaction) => {
 		return;
 	}
 
-	const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+	// Defer reply if a lot of dices are rolled
+	if (validArgs.diceValue > 50 && validArgs.diceCount >= 50) {
+		await interaction.deferReply();
 
-	await replyWithAttachments(interaction, dump.content, [dump.attachment]);
+		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+
+		await interaction.editReply({ content: dump.content, files: [dump.attachment]});
+	}
+	else {
+		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
+
+		replyWithAttachments(interaction, dump.content, [dump.attachment]);
+	}
 };
