@@ -2,7 +2,7 @@ import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
 import { default as sharp } from 'sharp';
 
 import { moduleName } from '../__init__.js';
-import { replyError, getModuleData, replyWithAttachments } from '../../../utils.js';
+import { replyError, getModuleData, defferReplyIfLongProcessing } from '../../../utils.js';
 import { DICE_FILES, DICE_VALUES, mapImages, colorDie, NUMBER_SPACING, NUMBER_MAX_WIDTH, MAX_DICE_PER_LINE, BASE_COLOR } from '../common.js'
 import { config } from '../../../config.js'
 
@@ -37,19 +37,10 @@ export const execute = async (interaction) => {
 		return;
 	}
 
-	// Defer reply if a lot of dices are rolled
-	if (validArgs.diceValue > 50 && validArgs.diceCount >= 50) {
-		await interaction.deferReply();
-
-		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
-
-		await interaction.editReply({ content: dump.content, files: [dump.attachment]});
-	}
-	else {
-		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
-
-		replyWithAttachments(interaction, dump.content, [dump.attachment]);
-	}
+	defferReplyIfLongProcessing(
+		interaction, 
+		() => rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor)
+	);
 };
 
 export function analizeArguments(diceValue, diceCount, specialCount, bonus, playerConfig) {
@@ -112,7 +103,7 @@ async function dumpResults(results, bonus, diceValue, defaultColor, specialCount
 		attachment = new AttachmentBuilder(await createDiceResult(results, diceValue, defaultColor, specialCount, specialColor), { name: 'dice_results.png' });
 	}
 
-	return { content, attachment };
+	return { content, attachments: [attachment] };
 }
 
 //#region CREATE DICE IMAGE

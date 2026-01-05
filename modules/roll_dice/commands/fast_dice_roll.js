@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 
 import { analizeArguments, rollAndDump } from './dice_roll.js';
-import { replyError, replyWithAttachments } from '../../../utils.js';
+import { replyError, defferReplyIfLongProcessing } from '../../../utils.js';
 import { config } from '../../../config.js'
 
 export const data = new SlashCommandBuilder()
@@ -51,17 +51,8 @@ export const execute = async (interaction) => {
 		return;
 	}
 
-	// Defer reply if a lot of dices are rolled
-	if (validArgs.diceValue > 50 && validArgs.diceCount >= 50) {
-		await interaction.deferReply();
-
-		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
-
-		await interaction.editReply({ content: dump.content, files: [dump.attachment]});
-	}
-	else {
-		const dump = await rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor);
-
-		replyWithAttachments(interaction, dump.content, [dump.attachment]);
-	}
+	defferReplyIfLongProcessing(
+		interaction, 
+		() => rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor)
+	);
 };

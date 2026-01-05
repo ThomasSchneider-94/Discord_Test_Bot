@@ -74,3 +74,16 @@ export const autocompleteArguments = async (interaction, choices) => {
 	const filtered = choices.filter(choice => choice.startsWith(focusedValue));
 	await interaction.respond(filtered.map(choice => ({ name: choice, value: choice })));
 };
+
+export async function defferReplyIfLongProcessing(interaction, generatingFunction, ephemeral = false) {
+	// generatingFunction should return { message, attachments } where attachments is an array
+	await interaction.deferReply();
+
+	try {
+		const { message, attachments } = await generatingFunction();
+
+  		await interaction.editReply({ content: message, files: attachments, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
+	} catch (err) {
+  		await interaction.editReply({ content: "❌ An error occurred", flags: MessageFlags.Ephemeral});
+	}
+}
