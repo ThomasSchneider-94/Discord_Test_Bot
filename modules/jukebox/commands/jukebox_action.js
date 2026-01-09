@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import { replyError } from '../../../utils.js';
 import { guildQueues } from '../guildQueue.js'
 
 //#region COMMAND DEFINITION
@@ -28,7 +27,7 @@ export const execute = async (interaction) => {
 	const queue = guildQueues.get(interaction.guild.id);
 
 	if (!queue) {
-		replyError(interaction, 'Their is currently no jukebox');
+		interaction.replyError('Their is currently no jukebox');
 		return;
 	}
 
@@ -64,7 +63,7 @@ export const execute = async (interaction) => {
 			interaction.reply("🎵 Now playing : " + queue.getCurrent() + "\n Playlist :\n" + queue.getQueue());
 			break;
 		default:
-			replyError(interaction, 'Unknown action');
+			interaction.replyError('Unknown action');
 			break;
 	}
 };

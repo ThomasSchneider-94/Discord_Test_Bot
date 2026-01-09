@@ -1,7 +1,6 @@
 import { SlashCommandBuilder, ChannelType  } from 'discord.js';
 import { joinVoiceChannel } from '@discordjs/voice';
 
-import { replyError } from '../../../utils.js';
 import { GuildQueue, guildQueues } from '../guildQueue.js';
 
 //#region COMMAND DEFINITION
@@ -17,7 +16,7 @@ export const execute = async (interaction) => {
     const channel = interaction.options.getChannel('channel');
 
     if (!connect(interaction.guild, channel, interaction.member.voice.channel)) {
-        replyError(interaction, 'Specify a voice channel or be in a voice channel');
+		interaction.replyError('Specify a voice channel or be in a voice channel');
         return;
     }
 	

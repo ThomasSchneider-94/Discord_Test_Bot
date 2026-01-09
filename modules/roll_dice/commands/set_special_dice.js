@@ -1,6 +1,5 @@
 import { SlashCommandBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
 
-import { replyError, replyWithAttachments } from '../../../utils.js';
 import { savePlayerConfig } from '../common.js';
 import { showDiceSet, getHexaColor, autocomplete as autocompleteColor } from './set_default_dice.js';
 
@@ -25,25 +24,34 @@ export const execute = async (interaction) => {
     const hexColor = getHexaColor(interaction.options.getString('color'));
 
     if (!(count && count >= 0) && !hexColor) {
-        await replyError(interaction, 'Please provide a positive number or color for the special dice.');
+		interaction.replyError('Please provide a positive number or color for the special dice.');
         return;
     }
 
+    let message = '';
+    let attachment;
+
     if (count && count >= 0 && !hexColor) {
         savePlayerConfig(interaction.user.id, { specialCount: count });
-        await interaction.reply({ content: `✅ Special dice count set to **${count}**.`, flags: MessageFlags.Ephemeral });
+        message = `✅ Special dice count set to **${count}**.`;
     }
     else {
-        const attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
+        attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
 
         if (count && count >= 0) {
             savePlayerConfig(interaction.user.id, { specialCount: count, specialColor: hexColor });
-            await replyWithAttachments(interaction, `✅ Special dice count set to **${count}** and color set to **` + interaction.options.getString('color') + '**!', [attachment], true);
+            message =  `✅ Special dice count set to **${count}** and color set to **` + interaction.options.getString('color') + '**!';
         }
         else {
             savePlayerConfig(interaction.user.id, { specialColor: hexColor });
-            await replyWithAttachments(interaction, '✅ Special dice color set to **' + interaction.options.getString('color') + '**!', [attachment], true);
-        }       
+            message = '✅ Special dice color set to **' + interaction.options.getString('color') + '**!';
+        }
+
+        await interaction.replyWithAttachments(
+            message,
+            [attachment],
+            true
+        );
     }
 };
 //#endregion COMMAND DEFINITION

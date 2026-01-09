@@ -1,4 +1,3 @@
-import { MessageFlags } from 'discord.js';
 import { dirname, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
@@ -33,19 +32,6 @@ export function getModuleConfig(module, file) {
 	return join(__dirname, 'modules', module, 'config', file);
 }
 
-/// Logging functions
-export async function logError(message) {
-	console.log(`\x1b[31m[ERROR]\x1b[0m ${message}`);
-}
-
-export async function logWarning(message) {
-	console.log(`\x1b[33m[WARNING]\x1b[0m ${message}`);
-}
-
-export async function logInfo(message) {
-	console.log(`\x1b[32m[INFO]\x1b[0m ${message}`);
-}
-
 /// Images
 export function hexToRgb(hex) {
   const bigint = parseInt(hex.slice(1), 16);
@@ -61,29 +47,18 @@ export function rgbToHex(rgb) {
 }
 
 /// Command reply helpers
-export async function replyError(interaction, message) {
-	await interaction.reply({ content: `❌ ${message}`, flags: MessageFlags.Ephemeral });
+
+
+
+/// Logger
+export async function logError(message) {
+	console.log(`\x1b[31m[ERROR]\x1b[0m ${message}`);
 }
 
-export async function replyWithAttachments(interaction, message, attachments = [], ephemeral = false) {
-	await interaction.reply({ content: message, files: attachments, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
+export async function logWarning(message) {
+	console.log(`\x1b[33m[WARNING]\x1b[0m ${message}`);
 }
 
-export const autocompleteArguments = async (interaction, choices) => {
-	const focusedValue = interaction.options.getFocused();
-	const filtered = choices.filter(choice => choice.startsWith(focusedValue));
-	await interaction.respond(filtered.map(choice => ({ name: choice, value: choice })));
-};
-
-export async function defferReplyIfLongProcessing(interaction, generatingFunction, ephemeral = false) {
-    // generatingFunction should return { content, files } where attachments is an array
-    await interaction.deferReply();
-
-    try {
-        const { content, files } = await generatingFunction();
-
-          await interaction.editReply({ content: content, files: files, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
-    } catch (err) {
-          await interaction.editReply({ content: "❌ An error occurred", flags: MessageFlags.Ephemeral});
-    }
+export async function logInfo(message) {
+	console.log(`\x1b[32m[INFO]\x1b[0m ${message}`);
 }

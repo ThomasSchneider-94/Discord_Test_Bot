@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
 import { default as sharp } from 'sharp';
 
-import { hexToRgb, replyError, replyWithAttachments, autocompleteArguments } from '../../../utils.js';
+import { hexToRgb } from '../../../utils.js';
 import { savePlayerConfig, mapImages, colorDie, DICE_FILES } from '../common.js';
 
 //#region COMMAND DEFINITION
@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('Default value of the dice'));
 
 export const autocomplete = async (interaction) => {
-	autocompleteArguments(interaction, Object.keys(AUTO_COMPLETE_COLOR_HEX));
+    interaction.autocomplete(Object.keys(AUTO_COMPLETE_COLOR_HEX));
 };
 
 export const execute = async (interaction) => {
@@ -25,25 +25,33 @@ export const execute = async (interaction) => {
     const hexColor = getHexaColor(interaction.options.getString('color'));
 
     if (!(value && value > 0) && !hexColor) {
-        await replyError(interaction, 'Please provide a positive default value or default hexa color for the dice.');
+        interaction.replyError('Please provide a positive default value or default hexa color for the dice.');
         return;
     }
 
+    let message = '';
+    let attachment;
+
     if (value && value > 0 && !hexColor) {
         savePlayerConfig(interaction.user.id, { defaultValue: value });
-        await interaction.reply({ content: `✅ Default dice value set to **${value}**.`, flags: MessageFlags.Ephemeral });
+        message = `✅ Default dice value set to **${value}**!`;
     }
     else {
-        const attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
+        attachment = new AttachmentBuilder(await showDiceSet(hexColor), { name: 'dice_set.png' });
 
         if (value && value >= 0) {
-            savePlayerConfig(interaction.user.id, { defaultValue: value, defaultColor: hexColor });
-            await replyWithAttachments(interaction, `✅ Default dice value set to **${value}** and color set to **` + interaction.options.getString('color') + '**!', [attachment], true);
+            savePlayerConfig(interaction.user.id, { defaultValue: value, defaultColor: hexColor });            
+            message = `✅ Default dice value set to **${value}** and color set to **` + interaction.options.getString('color') + '**!';
         }
         else {
             savePlayerConfig(interaction.user.id, { defaultColor: hexColor });
-            await replyWithAttachments(interaction, '✅ Default dice color set to **' + interaction.options.getString('color') + '**!', [attachment], true);
-        }       
+            message = '✅ Default dice color set to **' + interaction.options.getString('color') + '**!';
+        }
+        await interaction.replyWithAttachments(
+            message,
+            [attachment],
+            true
+        );
     }
 }
 //#endregion COMMAND DEFINITION

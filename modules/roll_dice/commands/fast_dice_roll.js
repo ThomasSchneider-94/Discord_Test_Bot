@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 
 import { analizeArguments, rollAndDump } from './dice_roll.js';
-import { replyError, defferReplyIfLongProcessing } from '../../../utils.js';
 import { config } from '../../../config.js'
 
 export const data = new SlashCommandBuilder()
@@ -47,12 +46,11 @@ export const execute = async (interaction) => {
 	);
 	
 	if (!validArgs) {
-		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice.');
+		interaction.replyError('Dice value should be at least 1. You can set a default value using /set-default-dice.');
 		return;
 	}
 
-	defferReplyIfLongProcessing(
-		interaction, 
+	interaction.deferReplyForLongProcess(
 		() => rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor)
 	);
 };

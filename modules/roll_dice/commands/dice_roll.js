@@ -2,7 +2,7 @@ import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
 import { default as sharp } from 'sharp';
 
 import { moduleName } from '../__init__.js';
-import { replyError, getModuleData, defferReplyIfLongProcessing } from '../../../utils.js';
+import { getModuleData } from '../../../utils.js';
 import { DICE_FILES, DICE_VALUES, mapImages, colorDie, NUMBER_SPACING, NUMBER_MAX_WIDTH, MAX_DICE_PER_LINE, BASE_COLOR } from '../common.js'
 import { config } from '../../../config.js'
 
@@ -33,12 +33,11 @@ export const execute = async (interaction) => {
 	);
 
 	if (!validArgs) {
-		await replyError(interaction, 'Dice value should be at least 1. You can set a default value using /set-default-dice.');
+		interaction.replyError('Dice value should be at least 1. You can set a default value using /set-default-dice.');
 		return;
 	}
 
-	defferReplyIfLongProcessing(
-		interaction, 
+	interaction.deferReplyForLongProcess(
 		() => rollAndDump(validArgs.diceValue, validArgs.diceCount, validArgs.specialCount, validArgs.bonus, validArgs.defaultColor, validArgs.specialColor)
 	);
 };

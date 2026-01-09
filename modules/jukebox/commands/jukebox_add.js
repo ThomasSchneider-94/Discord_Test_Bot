@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import { replyError } from '../../../utils.js';
 import { connect } from './jukebox_connect.js';
 import { GuildQueue, guildQueues } from '../guildQueue.js'
 
@@ -22,7 +21,7 @@ export const execute = async (interaction) => {
         // Join voice channel
         const connection = connect(interaction.guild, interaction.member.voice.channel, null);
         if (!connection) {
-            replyError(interaction, 'You are currently not in a voice channel');
+		    interaction.replyError('You are currently not in a voice channel');
             return;
         }
 
@@ -36,7 +35,7 @@ export const execute = async (interaction) => {
         interaction.reply(`🎵 Added to queue: ${song_url}`);
     }
     else {
-        replyError(interaction, `Failed to add to queue`);
+		interaction.replyError('Failed to add to queue');
     }
 }
 //#endregion COMMAND DEFINITION
