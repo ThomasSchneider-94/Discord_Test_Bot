@@ -103,7 +103,7 @@ async function dumpResults(results, bonus, diceValue, defaultColor, specialCount
 		attachment = new AttachmentBuilder(await createDiceResult(results, diceValue, defaultColor, specialCount, specialColor), { name: 'dice_results.png' });
 	}
 
-	return { content, attachments: [attachment] };
+	return { content, files: [attachment] };
 }
 
 //#region CREATE DICE IMAGE

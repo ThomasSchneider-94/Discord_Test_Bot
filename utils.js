@@ -76,14 +76,14 @@ export const autocompleteArguments = async (interaction, choices) => {
 };
 
 export async function defferReplyIfLongProcessing(interaction, generatingFunction, ephemeral = false) {
-	// generatingFunction should return { message, attachments } where attachments is an array
-	await interaction.deferReply();
+    // generatingFunction should return { content, files } where attachments is an array
+    await interaction.deferReply();
 
-	try {
-		const { message, attachments } = await generatingFunction();
+    try {
+        const { content, files } = await generatingFunction();
 
-  		await interaction.editReply({ content: message, files: attachments, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
-	} catch (err) {
-  		await interaction.editReply({ content: "❌ An error occurred", flags: MessageFlags.Ephemeral});
-	}
+          await interaction.editReply({ content: content, files: files, flags: ephemeral ? MessageFlags.Ephemeral : 0 });
+    } catch (err) {
+          await interaction.editReply({ content: "❌ An error occurred", flags: MessageFlags.Ephemeral});
+    }
 }
