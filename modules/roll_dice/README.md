@@ -1,38 +1,27 @@
-# Roll dice
+# Roll Dice
 
-The `roll_dice` module allows you to roll dice in Discord.
+Module for rolling dice and managing dice-related actions.
 
-## Functions
+## Commands
 
-- **/clear-data**  
-  Deletes all sets of colored dice that are not used by any player.
+- **/roll**
+  Roll a set of dice.
+  - `dice`: Value of the dice to roll: 6, 10, 20... Default value can be configured with `/set-dice`.
+  - `count`: Number of dice to roll. Default is 1.
+  - `modifier`: Modifier, positive or negative, to apply to the roll's total.
+  - `color`: Color of the dice. Use the preset colors or hexadecimal color. Default value can be configured with `/set-dice`
 
-- **/configure_results**  
-  Select which information is displayed after a roll. Multiple settings can be enabled at the same time.  
-  - `list-results` : Returns the results as a list  
-  - `total-value` : Returns the sum of all dice and any bonus  
-  - `above-average` : Returns the number of dice above the average  
-  - `visual-results` : Returns an image showing the results  
+- **/froll**
+  Roll multiples sets of dice in one argument.
+  - `args`: Use the [Die count]d[Die value] format, and separe each group by blanck space. Add modifier with +/-. Default dice value and color can be configured with `/set-dice`
 
-- **/roll**  
-  Roll a set of dice.  
-  - `dice` : Value of the dice to roll (e.g., d10, d20). The default value can be configured  
-  - `dice-count` : Number of dice to roll  
-  - `bonus` : Bonus added to the total sum  
-  - `special-dice` : Number of special dice (dice of a different color). The default value can be configured  
+- **/set-dice**
+  Configure a player's default dice value or/and default color.
+  - `color`: Default color of the dice when not specified. Use the preset colors or hexadecimal color.
+  - `value`: Default value of the dice to roll when not specified.
 
-- **/froll**  
-  Same as **/roll**, but with a single argument.  
-  - `args` : Arguments for **/roll** using the format:  
-    `[Dice count]d[Dice value]+[Bonus] [Special dice count]`  
-    Example: `3d10+5 1` will roll three d10, including one special die, and add 5 to the total. Default values can be configured.
-
-- **/set-default-dice**  
-  Set the color and/or default value of your dice.  
-  - `color` : Color of the dice. Accepts hex color codes (e.g. `#4f3d78`). Default is white  
-  - `value` : Default value of your dice  
-
-- **/set-special-dice**  
-  Set the color and/or count of your special dice.  
-  - `color` : Color of the dice. Accepts hex color codes (e.g. `#4f3d78`). Default is white  
-  - `count` : Default number of special dice
+- **/roll-display**
+  Configure the results display after a dice roll.
+  - `list`: Display the list of all dice result.
+  - `value`: Return the roll's successes.
+  - `visual`: Display an image with all dice results.

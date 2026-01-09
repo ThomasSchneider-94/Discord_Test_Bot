@@ -1,23 +1,21 @@
 # Jukebox
 
-The `jukebox` module allows you to play music from YouTube in a voice channel.
+Jukebox module to play music from Youtube in voice channels.
 
-## Functions
+## Commands
 
-- **/jb-connect** `channel`  
-  Connects the bot to a voice channel. If no channel is selected, it connects to your current voice channel.
+- **/jb**
+  Perform a specific action (play, pause, skip...).
+  - `action`: Action to perform: Play, Pause, Skip, Play again, loop, display current music or waiting list.
 
-- **/jb-add** `url`  
-  Adds a YouTube music link to the queue.
+- **/jb-add**
+  Add a music to the waiting list. If the bot is not connected to a voice chanel, it connects to the one you are currently in.
+  - `url`: Youtube url of the music to play.
 
-- **/jb** `action`  
-  - `Play` : Resume the music  
-  - `Pause` : Pause the music  
-  - `Stop` : Stop playing and clear the queue  
-  - `Skip` : Skip to the next track  
-  - `Now Playing` : Display the currently playing music  
-  - `List` : Display the music queue
+- **/jb-connect**
+  Connect the bot to a voice channel or the voice channel you are currently in.
+  - `channel`: Voice channel to cennect to.
 
-## Events
+## Features
 
-The bot will automatically disconnect after **10 seconds** of being alone in a voice channel.
+The bot disconnect after 10s of being left alone in a voice channel.
