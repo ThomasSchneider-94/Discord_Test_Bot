@@ -1,42 +1,35 @@
 class Logger {    
     info(message) {
-        this.#log("INFO", "32", message);
+        this._log("INFO", "32", message);
     }
     
     warning(message) {
-        this.#log("WARNING", "33", message);
+        this._log("WARNING", "33", message);
     }
     
     error(message) {
-        this.#log("ERROR", "31", message);
+        this._log("ERROR", "31", message);
     }
     
     debug(message) {
-        this.#log("DEBUG", "34", message);
+        this._log("DEBUG", "34", message);
     }
     
-    #log(level, color, message) {
-        console.log(`\x1b[${color}m[${level}]\x1b[0m ${message}`);
+    _log(level, color, message) {
+        console.log(`${Date.now()} \x1b[${color}m[${level}]\x1b[0m ${message}`);
     }
 }
 
-class ModuleLogger {
+class ModuleLogger extends Logger {
     constructor(moduleName, guildId) {
+        super();
         this.moduleName = moduleName;
         this.guildId = guildId;
-        const logger = new Logger();
-
-        return new Proxy(this, {
-            get(target, prop) {
-                if (prop in target) return target[prop];
-                return logger[prop];
-            }
-        });
     }
-    
-    #log(level, color, message) {
-        console.log(`\x1b[${color}m[${level}]\x1b[0m ${this.guildId} ${this.moduleName}: ${message}`);
+
+    _log(level, color, message) {
+        super._log(level, color, `${this.guildId} ${this.moduleName}: ${message}`);
     }
 }
 
-export const baseLogger = new Logger();
+export const logger = new Logger();

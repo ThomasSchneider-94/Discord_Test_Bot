@@ -32,6 +32,16 @@ export function getModuleConfig(module, file) {
 	return join(__dirname, 'modules', module, 'config', file);
 }
 
+
+
+
+
+
+
+
+
+
+
 /// Images
 export function hexToRgb(hex) {
   const bigint = parseInt(hex.slice(1), 16);
@@ -44,21 +54,4 @@ export function hexToRgb(hex) {
 
 export function rgbToHex(rgb) {
   return `#${((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1)}`;
-}
-
-/// Command reply helpers
-
-
-
-/// Logger
-export async function logError(message) {
-	console.log(`\x1b[31m[ERROR]\x1b[0m ${message}`);
-}
-
-export async function logWarning(message) {
-	console.log(`\x1b[33m[WARNING]\x1b[0m ${message}`);
-}
-
-export async function logInfo(message) {
-	console.log(`\x1b[32m[INFO]\x1b[0m ${message}`);
 }

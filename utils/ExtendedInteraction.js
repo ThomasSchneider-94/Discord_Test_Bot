@@ -10,24 +10,46 @@ export class ExtendedInteraction {
         });
     }
 
-    async replyWithAttachments(message, attachments = [], ephemeral = false) {
+    async replyWithAttachments(content, files = [], ephemeral = false) {
         await this.reply({
-            content: message,
-            files: attachments,
+            content: content,
+            files: files,
             flags: ephemeral ? MessageFlags.Ephemeral : 0
         });
     }
 
+    async replyError(error) {
+	    await this.reply({
+            content: `❌ ${error}`,
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
+    async followUpWithAttachments(content, files = [], ephemeral = false) {
+        await this.followUp({
+            content: content,
+            files: files,
+            flags: ephemeral ? MessageFlags.Ephemeral : 0
+        });
+    }
+
+    async followUpError(error) {
+        await this.followUp({
+            content: `❌ ${error}`,
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
     async deferReplyForLongProcess(generatingFunction, ephemeral = false) {
-        // generatingFunction should return { message, attachments } where attachments is an array
+        // generatingFunction should return { content, files } where attachments is an array
 	    await this.deferReply();
 
 	    try {
-		    const { message, attachments } = await generatingFunction();
+		    const { content, files } = await generatingFunction();
 
   		    await this.editReply({ 
-                content: message, 
-                files: attachments, 
+                content: content, 
+                files: files, 
                 flags: ephemeral ? MessageFlags.Ephemeral : 0 
             });
 	    } catch (err) {
@@ -36,13 +58,6 @@ export class ExtendedInteraction {
                 flags: MessageFlags.Ephemeral
             });
 	    }
-    }
-
-    async replyError(message) {
-	    await this.reply({
-            content: `❌ ${message}`,
-            flags: MessageFlags.Ephemeral
-        });
     }
 
     async autocomplete(choices) {

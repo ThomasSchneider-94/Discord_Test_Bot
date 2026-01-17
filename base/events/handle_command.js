@@ -1,7 +1,8 @@
 import { Events, MessageFlags } from 'discord.js';
 
-import { logError, logWarning } from '../../../utils.js';
-import { ExtendedInteraction } from '../../../utils/ExtendedInteraction.js';
+import { logError, logWarning } from '../../utils.js';
+import { ExtendedInteraction } from '../../utils/ExtendedInteraction.js';
+import { getGuild } from '../../utils/Guild.js';
 
 export const name = Events.InteractionCreate;
 export const once = false;
@@ -19,24 +20,39 @@ export async function execute(interaction) {
 };
 
 async function executeCommand(interaction) {
-	const newInteraction = new ExtendedInteraction(interaction);
+	const command = interaction.client.commands.get(interaction.commandName);
+	const guild = getGuild(interaction.client, interaction.guildId);
 
-	const command = newInteraction.client.commands.get(newInteraction.commandName);
-	if (!command) {
-		logError(`No command matching ${newInteraction.commandName} was found.`);
+	if (!verifyCommand(command, guild)) {
 		return;
 	}
 
+	const extendedInteraction = new ExtendedInteraction(interaction);
+	const module = guild.getModule(command.data.moduleName);
+
 	try {
-		await command.execute(newInteraction);
+		await command.execute(module, extendedInteraction);
 	} catch (error) {
 		logError(error);
-		if (newInteraction.replied || newInteraction.deferred) {
-			await newInteraction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+		if (extendedInteraction.replied || extendedInteraction.deferred) {
+			await extendedInteraction.followUpError('There was an error while executing this command!');
 		} else {
-			await newInteraction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+			await extendedInteraction.replyError('There was an error while executing this command!');
 		}
 	}
+}
+
+function verifyCommand(command, guild) {
+	if (!command) {
+		logError(`No command matching ${interaction.commandName} was found.`);
+		return false;
+	}	
+
+	if (!guild || !guild.hasModule(command.data.moduleName)) {
+		logError(`Guild ${interaction.guildId} does not have the module required for command ${command.data.name}.`);
+		return false;
+	}
+	return true;
 }
 
 async function autocompleteCommand(interaction) {

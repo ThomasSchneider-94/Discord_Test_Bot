@@ -47,6 +47,21 @@ if (options.includes('--list-modules') || options.includes('-l')) {
 }
 //#endregion Command Line Arguments
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Create a new client
 const client = new Client({
 	intents: [
@@ -63,6 +78,16 @@ const client = new Client({
 	],
 });
 client.commands = new Collection();
+
+
+
+
+
+
+
+
+
+
 
 /// Get modules
 const availableModules = readdirSync(join(__dirname, 'modules'));
@@ -92,6 +117,10 @@ if (options.includes('--modules') || options.includes('-m')) {
 else {
 	modules = availableModules
 }
+
+
+
+
 
 /// Load modules
 const loadModules = async () => {
@@ -125,36 +154,8 @@ const loadModules = async () => {
 	}
 }
 
-function addEvent(event) {
-	if (event.once === undefined || event.name === undefined || event.execute === undefined) {
-		logError(`The event at ${event.filePath} is missing a required "once", "name" or "execute" property.`);
-		return;
-	}
 
-	logInfo(`| Loading event ${event.name}`);
-
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args, client));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args, client));
-	}
-}
-
-function addCommand(command) {
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
-
-	if (command.data === undefined || command.execute === undefined) {
-		logWarning(`The command at ${command.filePath} is missing a required "data" or "execute" property.`);
-		return;
-	}
-
-	logInfo(`| Loading command ${command.data.name}`);
-
-	client.commands.set(command.data.name, command);
-}
 
 await loadModules();
 
-/// Login
-const { token } = config.secretConfig;
-client.login(token)
+

@@ -4,6 +4,12 @@ import { join } from 'path';
 import { importFromModuleFile, __dirname } from './utils.js';
 import { baseLogger } from './utils/Logger.js';
 
+/// Define valid command line options Format:
+// names: array of option names (e.g., --help, -h)
+// description: description of the option
+// parameters: string describing parameters (if any)
+// runOption: boolean indicating if this option is relevant for runtime
+// execute: function to execute for this option (if applicable)
 const valid_options = [
     {
         names: ["--help", "-h"],
