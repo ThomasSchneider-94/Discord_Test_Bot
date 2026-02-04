@@ -1,6 +1,6 @@
 import { MessageFlags } from 'discord.js';
 
-export class ExtendedInteraction {
+export class InteractionExtended {
     constructor(interaction) {
         return new Proxy(this, {
             get(target, prop) {

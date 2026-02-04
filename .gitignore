@@ -1,2 +1,5 @@
-modules/base/config/secretConfig.json
+# Ignore node modules and secret configuration
 node_modules
+
+# Ignore secret configuration file
+secretConfig.json

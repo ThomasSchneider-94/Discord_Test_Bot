@@ -1,8 +1,8 @@
 import { Events, MessageFlags } from 'discord.js';
 
-import { logError, logWarning } from '../../utils.js';
-import { ExtendedInteraction } from '../../utils/ExtendedInteraction.js';
-import { getGuild } from '../../utils/Guild.js';
+import { logError, logWarning } from '../../../utils/colors_handling.js';
+import { InteractionExtended } from '../../../utils/InteractionExtended.js';
+import { getGuild } from '../../../utils/Guild.js';
 
 export const name = Events.InteractionCreate;
 export const once = false;
@@ -27,17 +27,17 @@ async function executeCommand(interaction) {
 		return;
 	}
 
-	const extendedInteraction = new ExtendedInteraction(interaction);
+	const interactionExtended = new InteractionExtended(interaction);
 	const module = guild.getModule(command.data.moduleName);
 
 	try {
-		await command.execute(module, extendedInteraction);
+		await command.execute(module, interactionExtended);
 	} catch (error) {
 		logError(error);
-		if (extendedInteraction.replied || extendedInteraction.deferred) {
-			await extendedInteraction.followUpError('There was an error while executing this command!');
+		if (interactionExtended.replied || interactionExtended.deferred) {
+			await interactionExtended.followUpError('There was an error while executing this command!');
 		} else {
-			await extendedInteraction.replyError('There was an error while executing this command!');
+			await interactionExtended.replyError('There was an error while executing this command!');
 		}
 	}
 }
@@ -56,7 +56,7 @@ function verifyCommand(command, guild) {
 }
 
 async function autocompleteCommand(interaction) {
-	const newInteraction = new ExtendedInteraction(interaction);
+	const newInteraction = new InteractionExtended(interaction);
 
 	const command = newInteraction.client.commands.get(newInteraction.commandName);
 	if (!command) {
